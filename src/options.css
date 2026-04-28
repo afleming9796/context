@@ -1,0 +1,266 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  max-width: 820px;
+  margin: 24px auto;
+  padding: 0 20px 60px;
+  color: #222;
+  background: #fafafa;
+}
+h1 { margin: 0 0 4px; font-size: 22px; }
+h2 { margin: 0; font-size: 16px; }
+header .sub { color: #666; margin: 0 0 24px; }
+section {
+  background: #fff;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+}
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.hint { color: #666; font-size: 12px; margin: 2px 0 12px; }
+.hint code {
+  background: #f1f1f3;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+.rows { display: flex; flex-direction: column; gap: 10px; }
+
+input[type="text"],
+input:not([type]),
+select {
+  padding: 7px 10px;
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  font: inherit;
+  min-width: 0;
+  background: #fff;
+  box-sizing: border-box;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.del {
+  border: none;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px 8px;
+}
+.del:hover { color: #c00; }
+.empty { color: #999; font-size: 13px; padding: 4px 2px; }
+
+/* Source row — label + pattern inline */
+.source-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 32px;
+  gap: 8px;
+  align-items: center;
+}
+
+.source-card {
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.source-top {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.source-bottom { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+
+.inline-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #444;
+}
+.inline-label { color: #555; }
+.inline-field select {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* Destination card — URL fields get full-width rows so long URLs are readable */
+.dest-card {
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dest-top {
+  display: grid;
+  grid-template-columns: 1fr 60px 220px auto;
+  gap: 8px;
+  align-items: center;
+}
+.dest-card .field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.dest-card .field-label {
+  font-size: 11px;
+  color: #6b6b70;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.dest-card .field input {
+  width: 100%;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+}
+.dest-bottom {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* iOS-style switch used across the options page */
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  color: #444;
+}
+.switch input { display: none; }
+.switch-track {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  background: #d4d4d8;
+  border-radius: 999px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s;
+}
+.switch input:checked + .switch-track { background: #2563eb; }
+.switch input:checked + .switch-track .switch-thumb { transform: translateX(14px); }
+
+/* Keyboard shortcut recorder */
+.shortcut-rows { display: flex; flex-direction: column; gap: 6px; }
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.shortcut-label { font-size: 13px; color: #333; }
+.shortcut-field { display: flex; align-items: center; gap: 4px; }
+.shortcut-input {
+  width: 150px;
+  text-align: center;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 5px 8px;
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  background: #f9f9fb;
+  cursor: pointer;
+  caret-color: transparent;
+}
+.shortcut-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.shortcut-input.recording {
+  background: #eef4ff;
+  border-color: #2563eb;
+}
+.shortcut-clear {
+  border: none;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px;
+}
+.shortcut-clear:hover { color: #c00; }
+.shortcut-sep {
+  font-size: 11px;
+  color: #6b6b70;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-top: 8px;
+  margin-bottom: 2px;
+  padding-top: 8px;
+  border-top: 1px solid #e4e4e7;
+}
+
+button.primary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font: inherit;
+  cursor: pointer;
+}
+button.primary:hover { background: #1d4ed8; }
+.backup-group { margin-top: 10px; }
+.backup-group-label {
+  font-size: 11px;
+  color: #6b6b70;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+.backup .actions { display: flex; gap: 8px; }
+.backup button {
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid #d4d4d8;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+.status {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #111;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+.status.visible { opacity: 1; transform: translateY(0); }

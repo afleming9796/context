@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Context — Settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Context</h1>
+      <p class="sub">Configure where the widget appears and what it searches.</p>
+    </header>
+
+    <section>
+      <div class="section-head">
+        <h2>Where does Context appear?</h2>
+        <button id="add-source" class="primary">+ Add page</button>
+      </div>
+      <p class="hint">
+        URL patterns that decide where the widget shows up. Use <code>*</code> as a
+        wildcard, e.g. <code>https://github.com/*/issues*</code> or
+        <code>https://*.atlassian.net/browse/*</code>.
+      </p>
+      <div id="sources" class="rows"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Where does Context take you?</h2>
+        <button id="add-dest" class="primary">+ Add destination</button>
+      </div>
+      <p class="hint">
+        Each destination becomes a button in the widget and a right-click menu
+        item. Use <code>{term}</code> as the placeholder in the URL template.
+        Choose <b>Salesforce componentDef</b> as the encoding to build a base64
+        Lightning search payload — then use a template like
+        <code>https://YOUR-INSTANCE.lightning.force.com/one/one.app#{term}</code>.
+        Icons are just characters — paste any emoji (try <code>⌘ + Ctrl + Space</code>
+        on Mac or <code>Win + .</code> on Windows) or any symbol from
+        <a href="https://emojipedia.org" target="_blank">emojipedia.org</a>.
+      </p>
+      <div id="destinations" class="rows"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Keyboard shortcuts</h2>
+      </div>
+      <p class="hint">
+        Click a shortcut field and press a key combo to record it. Shortcuts
+        require at least one modifier key (⌘, ⌃, ⌥). Click ✕ to clear.
+        Per-destination shortcuts grab highlighted text and search immediately.
+      </p>
+      <div id="shortcuts" class="shortcut-rows"></div>
+    </section>
+
+    <section class="backup">
+      <h2>Backup</h2>
+      <p class="hint">
+        Settings (sources + destinations) and remembered searches back up
+        separately so you can share your config without leaking the terms
+        you've searched. Import auto-detects which kind of file you picked.
+      </p>
+      <div class="backup-group">
+        <div class="backup-group-label">Settings</div>
+        <div class="actions">
+          <button id="export-settings">Export settings</button>
+          <button id="import-settings">Import settings</button>
+        </div>
+      </div>
+      <div class="backup-group">
+        <div class="backup-group-label">Remembered searches</div>
+        <div class="actions">
+          <button id="export-searches">Export searches</button>
+          <button id="import-searches">Import searches</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="status" class="status"></div>
+
+    <script src="storage.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>
