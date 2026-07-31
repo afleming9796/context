@@ -47,11 +47,6 @@
           <button class="del" title="Delete">✕</button>
         </div>
         <div class="source-bottom">
-          <label class="switch" title="Pre-populate the search bar with the last term used on this page">
-            <input type="checkbox" class="f-remember-cb" />
-            <span class="switch-track"><span class="switch-thumb"></span></span>
-            <span class="switch-label">Remember searches</span>
-          </label>
           <label class="switch" title="Default the domain toggle to on — strips user@acme.com to acme.com">
             <input type="checkbox" class="f-domain-cb" />
             <span class="switch-track"><span class="switch-thumb"></span></span>
@@ -61,11 +56,9 @@
       `;
       const label = row.querySelector(".f-label");
       const pattern = row.querySelector(".f-pattern");
-      const remember = row.querySelector(".f-remember-cb");
       const domain = row.querySelector(".f-domain-cb");
       label.value = src.label || "";
       pattern.value = src.urlPattern || "";
-      remember.checked = src.rememberSearches !== false;
       domain.checked = !!src.domainOnlyDefault;
       label.addEventListener("input", () => {
         state.sources[idx].label = label.value;
@@ -73,10 +66,6 @@
       });
       pattern.addEventListener("input", () => {
         state.sources[idx].urlPattern = pattern.value;
-        persist();
-      });
-      remember.addEventListener("change", () => {
-        state.sources[idx].rememberSearches = remember.checked;
         persist();
       });
       domain.addEventListener("change", () => {
@@ -267,7 +256,6 @@
       id: uid("src"),
       label: "",
       urlPattern: "",
-      rememberSearches: true,
     });
     persist().then(render);
   });
@@ -326,11 +314,7 @@
   document.getElementById("export-settings").addEventListener("click", async () => {
     download(`context-settings-${dateStamp()}.json`, await S.exportSettingsBackup());
   });
-  document.getElementById("export-searches").addEventListener("click", async () => {
-    download(`context-searches-${dateStamp()}.json`, await S.exportLastSearchBackup());
-  });
   document.getElementById("import-settings").addEventListener("click", pickAndImport);
-  document.getElementById("import-searches").addEventListener("click", pickAndImport);
 
   // ---- Init ----
 

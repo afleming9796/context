@@ -8,14 +8,15 @@ A Chrome extension for parameterized shortcuts/bookmarks, e.g. highight "Tommy" 
 - - **Persistent open/closed state**: close the widget on a source and it stays closed on every matching page across tabs and sessions.
 - **Configurable destinations**: URL templates with a `{term}` placeholder, each with its own label/icon. Tab reuse comes for free.
 - **Domain-only toggle**: strip `user@acme.com` to `acme.com` before searching. Default is per-source so it matches your workflow.
-- **Remembered search term per source page**: the last term is pre-populated next time you land on that URL.
 - **Right-click context menu**: highlight text on any page → search it in any configured destination.
 - **Keyboard shortcuts** (configurable):
   - Toggle the widget open/closed (default: `Cmd+M`)
   - Grab highlighted text into the search bar (default: `Cmd+B`)
   - Quick-search a destination with the highlighted text — works on any URL, not just configured sources
 - **Toolbar icon**: click the Context icon in your Chrome toolbar to toggle the widget on the current page.
-- **JSON backup / restore** for both settings and remembered searches (separately).
+- **JSON backup / restore** for your settings.
+
+Context deliberately keeps no history of what you search — it just opens URLs. If you want the search bar to remember and pre-fill the last term per page, install the companion **[context-memory](https://github.com/afleming9796/context-memory)** extension alongside it; that keeps the stored-search-history surface out of Context itself.
 
 ## Installation
 
@@ -43,7 +44,6 @@ Each source is a URL pattern. Use `*` as a wildcard. Examples:
 
 Per-source options:
 
-- **Remember searches** — pre-populate the search bar with the last term used on this URL
 - **Domain only by default** — set the domain-strip toggle to on by default for this source
 
 ### Destinations — what Context searches
@@ -69,9 +69,4 @@ Per-destination shortcuts grab the highlighted text on the page and search immed
 
 ## Backup
 
-The options page has two separate backup pairs:
-
-- **Export / Import settings** — sources, destinations, and shortcut bindings. Share this with a coworker without leaking the things you've searched for.
-- **Export / Import remembered searches** — the per-URL last-search history.
-
-Each export is a JSON file, and import auto-detects which kind it is. Back up before uninstalling — Chrome wipes local storage on a full uninstall/reinstall.
+The options page can **Export / Import settings** — sources, destinations, and shortcut bindings — as a JSON file. Share it with a coworker or move your config between machines. Back up before uninstalling — Chrome wipes local storage on a full uninstall/reinstall.
