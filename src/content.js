@@ -40,9 +40,9 @@
   function applyVisibility() {
     if (!activeSource || visibility === "hidden") {
       destroyPanel();
-      return;
+      return Promise.resolve();
     }
-    renderFull();
+    return renderFull();
   }
 
   // ---- Tab reuse (ask background) ----
@@ -106,15 +106,24 @@
       return;
     }
 
-    // Grab selection into search bar — needs the widget, so needs a source
+    // Grab selection into search bar — needs the widget, so needs a source.
+    // Capture the selection synchronously (it's cleared once we focus our
+    // own input), then wait for the render to finish before populating.
+    // renderFull() is async (it awaits chrome.storage), so a fixed
+    // requestAnimationFrame delay races the render and drops the text on
+    // the first press when the widget starts hidden — hence issue #10.
     if (activeSource && S.matchesShortcut(e, sc.grabSelection)) {
       e.preventDefault();
       e.stopPropagation();
       const sel = window.getSelection().toString().trim();
       if (!sel) return;
-      setVisibility("expanded");
-      // applyVisibility() above already re-rendered; populate the input
-      requestAnimationFrame(() => {
+      visibility = "expanded";
+      if (activeSource) {
+        S.saveVisibility(activeSource.id, "expanded").catch((err) => {
+          if (isContextInvalidated(err)) dispose();
+        });
+      }
+      applyVisibility().then(() => {
         const input = panel?.querySelector(".ctx-search-input");
         if (input) {
           input.value = sel;
