@@ -1,7 +1,6 @@
 // Context — Content Script
 // Shows a floating search panel on pages matching user-configured sources.
-// Each row runs a search against a user-configured destination. The last
-// term (and per-destination "domain only" toggle) is remembered per source URL.
+// Each row runs a search against a user-configured destination.
 //
 // Visibility is binary ("expanded" or "hidden") and is persisted per source
 // in chrome.storage.local. The widget is open by default on every configured
@@ -154,22 +153,9 @@
   // Stand-alone search execution that doesn't require the widget to exist.
   // Uses the source's domainOnlyDefault if we're on a matching page,
   // otherwise just searches the raw selection.
-  async function executeQuickSearch(dest, rawTerm) {
+  function executeQuickSearch(dest, rawTerm) {
     const domainOnly = activeSource ? !!activeSource.domainOnlyDefault : false;
     const term = domainOnly ? S.domainOf(rawTerm) : rawTerm;
-
-    // If we're on a source page and remembering, persist the term so the
-    // widget reflects what just happened next time it opens.
-    if (activeSource && activeSource.rememberSearches !== false) {
-      const sourceKey = S.sourceKeyFor(location.href);
-      try {
-        await S.saveLastSearch(sourceKey, {
-          term: rawTerm,
-          domainOnlyByDest: { __shared: domainOnly },
-        });
-      } catch (_) {}
-    }
-
     const md = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
     openOrReuseTab(S.buildDestinationUrl(dest, term), md);
   }
@@ -188,11 +174,6 @@
 
   async function renderFull() {
     const p = getOrCreatePanel();
-    const sourceKey = S.sourceKeyFor(location.href);
-    const remember = activeSource ? activeSource.rememberSearches !== false : true;
-    const last = remember
-      ? await S.getLastSearch(sourceKey)
-      : { term: "", domainOnlyByDest: {} };
 
     if (!settings.destinations.length) {
       p.innerHTML = `
@@ -209,11 +190,7 @@
       return;
     }
 
-    const sourceDomainDefault = activeSource ? !!activeSource.domainOnlyDefault : false;
-    const rememberedDomain =
-      last.domainOnlyByDest && last.domainOnlyByDest.__shared !== undefined
-        ? last.domainOnlyByDest.__shared
-        : sourceDomainDefault;
+    const domainDefault = activeSource ? !!activeSource.domainOnlyDefault : false;
 
     p.innerHTML = `
       <div class="ctx-header">
@@ -242,16 +219,7 @@
     const input = p.querySelector(".ctx-search-input");
     const cb = p.querySelector(".ctx-domain-cb");
     const grid = p.querySelector(".ctx-btn-grid");
-    input.value = last.term || "";
-    cb.checked = !!rememberedDomain;
-
-    async function persist() {
-      if (!remember) return;
-      await S.saveLastSearch(sourceKey, {
-        term: input.value,
-        domainOnlyByDest: { __shared: cb.checked },
-      });
-    }
+    cb.checked = domainDefault;
 
     function go(dest) {
       const raw = input.value.trim();
@@ -261,7 +229,6 @@
         return;
       }
       const term = cb.checked ? S.domainOf(raw) : raw;
-      persist();
       const md = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
       openOrReuseTab(S.buildDestinationUrl(dest, term), md);
     }
@@ -278,8 +245,6 @@
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && settings.destinations.length) go(settings.destinations[0]);
     });
-    input.addEventListener("input", persist);
-    cb.addEventListener("change", persist);
 
     attachHeaderHandlers();
   }
@@ -359,8 +324,8 @@
   observer.observe(document.body, { childList: true, subtree: true });
   const pollId = setInterval(checkUrl, 1500);
 
-  // Re-render only when settings change. lastSearch fires on every
-  // keystroke from persist() and would blow away the input being typed.
+  // Re-render only when settings change (and mirror visibility flips from
+  // other tabs, below).
   try {
     chrome.storage.onChanged.addListener((changes, area) => {
       if (disposed) return;

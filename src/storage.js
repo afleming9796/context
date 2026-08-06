@@ -6,7 +6,6 @@
   "use strict";
 
   const SETTINGS_KEY = "settings";
-  const LAST_SEARCH_KEY = "lastSearch";
   const VISIBILITY_KEY = "visibility";
 
   const DEFAULT_SETTINGS = {
@@ -15,7 +14,6 @@
         id: "src-gmail",
         label: "Gmail",
         urlPattern: "https://mail.google.com/*",
-        rememberSearches: true,
       },
     ],
     destinations: [
@@ -126,17 +124,6 @@
     return null;
   }
 
-  // Normalize URL → sourceKey used to remember per-page state.
-  // Strips hash and query so minor navigation noise doesn't fragment state.
-  function sourceKeyFor(url) {
-    try {
-      const u = new URL(url);
-      return u.origin + u.pathname;
-    } catch (_) {
-      return url;
-    }
-  }
-
   // Wraps a raw term in the Salesforce Lightning search componentDef
   // payload and base64-encodes it. The caller pastes this into a
   // urlTemplate like `https://INSTANCE/one/one.app#{term}`.
@@ -218,34 +205,6 @@
     });
   }
 
-  function getAllLastSearch() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get(LAST_SEARCH_KEY, (r) => {
-        resolve(r[LAST_SEARCH_KEY] || {});
-      });
-    });
-  }
-
-  async function getLastSearch(sourceKey) {
-    const all = await getAllLastSearch();
-    return all[sourceKey] || { term: "", domainOnlyByDest: {} };
-  }
-
-  async function saveLastSearch(sourceKey, patch) {
-    const all = await getAllLastSearch();
-    const prev = all[sourceKey] || { term: "", domainOnlyByDest: {} };
-    all[sourceKey] = {
-      term: patch.term !== undefined ? patch.term : prev.term,
-      domainOnlyByDest: {
-        ...prev.domainOnlyByDest,
-        ...(patch.domainOnlyByDest || {}),
-      },
-    };
-    return new Promise((resolve) => {
-      chrome.storage.local.set({ [LAST_SEARCH_KEY]: all }, resolve);
-    });
-  }
-
   function uid(prefix) {
     return prefix + "-" + Math.random().toString(36).slice(2, 9);
   }
@@ -280,31 +239,17 @@
     };
   }
 
-  async function exportLastSearchBackup() {
-    const lastSearch = await getAllLastSearch();
-    return {
-      version: 1,
-      kind: "lastSearch",
-      exportedAt: new Date().toISOString(),
-      lastSearch,
-    };
-  }
-
   async function importBackup(data) {
     if (!data || typeof data !== "object") throw new Error("invalid backup");
-    const patch = {};
-    if (data.settings) patch[SETTINGS_KEY] = addIds(data.settings);
-    if (data.lastSearch) patch[LAST_SEARCH_KEY] = data.lastSearch;
-    if (!Object.keys(patch).length) throw new Error("backup contains neither settings nor lastSearch");
+    if (!data.settings) throw new Error("backup contains no settings");
     return new Promise((resolve) => {
-      chrome.storage.local.set(patch, resolve);
+      chrome.storage.local.set({ [SETTINGS_KEY]: addIds(data.settings) }, resolve);
     });
   }
 
   globalThis.CtxStorage = {
     DEFAULT_SETTINGS,
     SETTINGS_KEY,
-    LAST_SEARCH_KEY,
     VISIBILITY_KEY,
     getVisibility,
     saveVisibility,
@@ -313,19 +258,14 @@
     saveSettings,
     seedDefaultsIfEmpty,
     matchSource,
-    sourceKeyFor,
     matchDomainFor,
     buildDestinationUrl,
     domainOf,
-    getLastSearch,
-    saveLastSearch,
-    getAllLastSearch,
     matchesShortcut,
     shortcutFromEvent,
     formatShortcut,
     uid,
     exportSettingsBackup,
-    exportLastSearchBackup,
     importBackup,
   };
 })();
