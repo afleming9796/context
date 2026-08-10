@@ -53,7 +53,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
-chrome.contextMenus.onClicked.addListener(async (info) => {
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const selectedText = info.selectionText?.trim();
   if (!selectedText) return;
   if (!info.menuItemId || !String(info.menuItemId).startsWith("context-dest-")) return;
@@ -64,6 +64,14 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
   if (!dest) return;
 
   const term = selectedText;
+  // Let the content script emit the companion "search" signal from the page
+  // (the worker has no window to post from). Best-effort — the tab may have
+  // no content script (e.g. a restricted page), so swallow lastError.
+  if (tab?.id != null) {
+    chrome.tabs.sendMessage(tab.id, { type: "SEARCH_TERM", term }, () => {
+      void chrome.runtime.lastError;
+    });
+  }
   const md = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
   openOrReuseTab(S.buildDestinationUrl(dest, term), md);
 });

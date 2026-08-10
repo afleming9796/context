@@ -50,6 +50,24 @@
     chrome.runtime.sendMessage({ type: "OPEN_OR_REUSE_TAB", url, matchDomain });
   }
 
+  // ---- Companion signal ----
+  // Context itself stores no search history. But on every search — from the
+  // widget, the grab-and-search shortcut, the per-destination quick-search
+  // shortcut, or the right-click menu — it emits the raw term as a
+  // fire-and-forget window message so an OPTIONAL companion extension
+  // (context-memory) can remember it. No new permissions, nothing persisted
+  // here. Nothing listens by default, so this is a no-op on its own.
+  function broadcastSearch(rawTerm, domainOnly) {
+    const term = (rawTerm || "").trim();
+    if (!term) return;
+    try {
+      window.postMessage(
+        { source: "context", kind: "search", term, domainOnly: !!domainOnly },
+        "*"
+      );
+    } catch (_) {}
+  }
+
   // ---- DOM helpers ----
 
   function getOrCreatePanel() {
@@ -157,6 +175,7 @@
     const domainOnly = activeSource ? !!activeSource.domainOnlyDefault : false;
     const term = domainOnly ? S.domainOf(rawTerm) : rawTerm;
     const md = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
+    broadcastSearch(rawTerm, domainOnly);
     openOrReuseTab(S.buildDestinationUrl(dest, term), md);
   }
 
@@ -230,6 +249,7 @@
       }
       const term = cb.checked ? S.domainOf(raw) : raw;
       const md = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
+      broadcastSearch(raw, cb.checked);
       openOrReuseTab(S.buildDestinationUrl(dest, term), md);
     }
 
@@ -350,6 +370,14 @@
   try {
     chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       if (disposed) return;
+      // The right-click "Search in …" menu runs in the background worker,
+      // which has no page window to post from. It relays the term here so we
+      // can emit the same companion signal as the in-page search paths.
+      if (msg?.type === "SEARCH_TERM") {
+        broadcastSearch(msg.term, activeSource ? !!activeSource.domainOnlyDefault : false);
+        sendResponse({ ok: true });
+        return;
+      }
       if (msg?.type !== "TOGGLE_WIDGET") return;
       if (!activeSource) {
         sendResponse({ ok: false, reason: "no-active-source" });

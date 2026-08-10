@@ -16,7 +16,7 @@ A Chrome extension for parameterized shortcuts/bookmarks, e.g. highight "Tommy" 
 - **Toolbar icon**: click the Context icon in your Chrome toolbar to toggle the widget on the current page.
 - **JSON backup / restore** for your settings.
 
-Context deliberately keeps no history of what you search — it just opens URLs. If you want the search bar to remember and pre-fill the last term per page, install the companion **[context-memory](https://github.com/afleming9796/context-memory)** extension alongside it; that keeps the stored-search-history surface out of Context itself.
+Context deliberately keeps no history of what you search — it just opens URLs. If you want the search bar to remember and pre-fill the last term per page, install the companion **[context-memory](https://github.com/afleming9796/context-memory)** extension alongside it; that keeps the stored-search-history surface out of Context itself. To let it remember searches made from *any* path (widget, grab shortcut, right-click menu, or quick-search shortcut), Context emits the raw term as a fire-and-forget `window.postMessage({ source: "context", kind: "search", term })` on every search. It's a no-op unless the companion is installed — Context adds no permissions and stores nothing.
 
 ## Installation
 
