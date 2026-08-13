@@ -324,3 +324,27 @@ textarea { resize: vertical; }
     background: #1e3a8a33; color: #93c5fd; border-color: #1e40af;
   }
 }
+
+/* Quick-search slot hint in the destination form */
+.slot-hint {
+  font-size: 10.5px;
+  color: #71717a;
+  line-height: 1.5;
+  margin-top: 7px;
+}
+.slot-hint code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+  padding: 0 4px;
+}
+.slot-hint .link { color: #2563eb; text-decoration: none; font-weight: 600; }
+.slot-hint .link:hover { text-decoration: underline; }
+
+@media (prefers-color-scheme: dark) {
+  .slot-hint code { background: #1e3a8a33; color: #93c5fd; border-color: #1e40af; }
+  .slot-hint .link { color: #60a5fa; }
+}

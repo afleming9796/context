@@ -197,10 +197,43 @@
   }
   for (const el of [fLabel, fTemplate]) el.addEventListener("input", validate);
 
+  // Which quick-search slot this destination occupies, and how to rebind it.
+  // A new destination lands at the end, so its slot is the current length.
+  function renderSlotHint(idx) {
+    const el = $("#slot-hint");
+    const n = idx + 1;
+    const link = `<a href="#" class="link" data-shortcuts>Chrome shortcut settings</a>`;
+    if (idx >= 4) {
+      el.innerHTML =
+        `Destination ${n}. Only the first four get a quick-search shortcut, ` +
+        `so this one is reachable from the panel and the right-click menu.`;
+      return;
+    }
+    const key = slotKeys[idx];
+    el.innerHTML = key
+      ? `Destination ${n}. Change keyboard shortcut from <code>${key}</code> in ${link}.`
+      : `Destination ${n} has no keyboard shortcut yet. Assign one in ${link}.`;
+  }
+
+  // The link is rewritten on every open, so delegate rather than re-binding.
+  // A plain href can't reach a chrome:// page — it has to go through tabs.
+  $("#slot-hint").addEventListener("click", (e) => {
+    if (!e.target.closest("[data-shortcuts]")) return;
+    e.preventDefault();
+    chrome.tabs.create({ url: "chrome://extensions/shortcuts" });
+    window.close();
+  });
+
   function openForm(id) {
     editingId = id;
     const dest = id ? state.destinations.find((d) => d.id === id) : null;
-    $("#form-title").textContent = dest ? "Edit destination" : "New destination";
+    const idx = id
+      ? state.destinations.findIndex((d) => d.id === id)
+      : state.destinations.length;
+    $("#form-title").textContent = dest
+      ? `Edit destination ${idx + 1}`
+      : "New destination";
+    renderSlotHint(idx);
     fIcon.value = dest ? dest.icon || "" : "";
     fLabel.value = dest ? dest.label || "" : "";
     fTemplate.value = dest ? dest.urlTemplate || "" : "";
