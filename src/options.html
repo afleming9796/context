@@ -8,27 +8,43 @@
   <body>
     <header>
       <h1>Context</h1>
-      <p class="sub">Configure what Context searches. Summon it anywhere with a keyboard shortcut.</p>
+      <p class="sub">Highlight text anywhere, search it in the sites you actually use.</p>
     </header>
 
-    <section>
-      <div class="section-head">
-        <h2>Where does Context take you?</h2>
-        <button id="add-dest" class="primary">+ Add destination</button>
-      </div>
+    <section class="start">
+      <h2>Getting started</h2>
+      <ol class="steps">
+        <li>
+          <b>Add a destination.</b> Click the Context icon in your toolbar to open
+          the panel, go to <b>Destinations</b>, and press <b>+</b>. A destination is
+          any site you search often.
+          <div class="step-detail">
+            The URL template is the trick: run a search on the site, copy the
+            resulting URL, and replace your search words with <code>{term}</code>.
+            <div class="examples">
+              <div><span class="ex-label">Google</span><code>https://www.google.com/search?q={term}</code></div>
+              <div><span class="ex-label">Gmail</span><code>https://mail.google.com/mail/u/0/#search/{term}</code></div>
+              <div><span class="ex-label">GitHub</span><code>https://github.com/search?q={term}&amp;type=issues</code></div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <b>Highlight text on any page</b> — a name, an email address, a ticket ID.
+        </li>
+        <li>
+          <b>Search it</b>, whichever way suits you:
+          <ul class="ways">
+            <li>Press <code id="k-open">⌘M</code> to open the panel with your highlighted text already filled in, then pick a destination.</li>
+            <li>Right-click → <b>Context</b> → pick a destination.</li>
+            <li>Press <code>⌥1</code> or <code>⌥2</code> to jump straight to your first or second destination.</li>
+          </ul>
+        </li>
+      </ol>
       <p class="hint">
-        Each destination becomes a button in the widget and a right-click menu
-        item. The first four also get quick-search slots — highlight text on
-        any page and press the slot's shortcut to search immediately. Use
-        <code>{term}</code> as the placeholder in the URL template.
-        Choose <b>Salesforce componentDef</b> as the encoding to build a base64
-        Lightning search payload — then use a template like
-        <code>https://YOUR-INSTANCE.lightning.force.com/one/one.app#{term}</code>.
-        Icons are just characters — paste any emoji (try <code>⌘ + Ctrl + Space</code>
-        on Mac or <code>Win + .</code> on Windows) or any symbol from
-        <a href="https://emojipedia.org" target="_blank">emojipedia.org</a>.
+        Context reuses an existing tab on the destination site when it can, so
+        you don't end up with twelve Gmail tabs. Turn that off per destination
+        with <b>Always open a new tab</b>.
       </p>
-      <div id="destinations" class="rows"></div>
     </section>
 
     <section>
@@ -37,11 +53,10 @@
         <button id="open-shortcuts" class="primary">Change in Chrome…</button>
       </div>
       <p class="hint">
-        Shortcuts are managed by Chrome (<code>chrome://extensions/shortcuts</code>)
-        so they work on every page without Context needing access to any site.
-        Quick-search slots map to your first four destinations, in order.
-        On macOS, if <code>⌘M</code> is taken by window-minimize, rebind the
-        toggle shortcut there.
+        Chrome owns these bindings — that's why Context needs no access to the
+        sites you visit. Quick-search slots map to your first four destinations,
+        in the order they appear in the panel. On macOS, <code>⌘M</code> may be
+        reserved for window-minimize; rebind it if it won't take.
       </p>
       <div id="shortcuts" class="shortcut-rows"></div>
     </section>
@@ -49,16 +64,23 @@
     <section class="backup">
       <h2>Backup</h2>
       <p class="hint">
-        Export your destinations to a JSON file to share or move your config
-        between machines.
+        Export your destinations to a JSON file to share them or move between
+        machines. Chrome wipes local storage on uninstall, so export before you
+        remove the extension.
       </p>
-      <div class="backup-group">
-        <div class="backup-group-label">Settings</div>
-        <div class="actions">
-          <button id="export-settings">Export settings</button>
-          <button id="import-settings">Import settings</button>
-        </div>
+      <div class="actions">
+        <button id="export-settings">Export destinations</button>
+        <button id="import-settings">Import destinations</button>
       </div>
+    </section>
+
+    <section class="privacy">
+      <h2>What Context can see</h2>
+      <p class="hint">
+        Nothing runs on any page until you invoke Context, and then only on that
+        one tab. It keeps no history of what you search, and sends nothing
+        anywhere — your destinations live in this browser's local storage.
+      </p>
     </section>
 
     <div id="status" class="status"></div>

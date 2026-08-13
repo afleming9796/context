@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Context",
-  "version": "4.0.0",
-  "description": "Highlight text and search it anywhere — configurable destinations, keyboard-first",
+  "version": "5.0.0",
+  "description": "Highlight text and search it anywhere — your own destinations, one keystroke away",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -18,7 +18,8 @@
   ],
   "options_page": "src/options.html",
   "action": {
-    "default_title": "Context settings",
+    "default_title": "Context",
+    "default_popup": "src/popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
@@ -30,12 +31,11 @@
     "service_worker": "src/background.js"
   },
   "commands": {
-    "toggle-widget": {
+    "_execute_action": {
       "suggested_key": {
         "default": "Ctrl+M",
         "mac": "Command+M"
-      },
-      "description": "Toggle the Context widget (pre-fills highlighted text)"
+      }
     },
     "quick-search-1": {
       "suggested_key": {

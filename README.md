@@ -1,24 +1,24 @@
 # Context
 
-A Chrome extension for parameterized shortcuts/bookmarks, e.g. highlight "Tommy" and press a shortcut to search for "Tommy" in a new or existing Gmail tab.
+A Chrome extension for parameterized shortcuts/bookmarks: highlight "Tommy" anywhere, press a key, and search for "Tommy" in Gmail — in a new tab or the one you already have open.
 
-Context is keyboard-first and permission-light: nothing runs on any page until you summon it, and it needs no access to site data at install.
+Context is keyboard-first and permission-light. Nothing runs on any page until you invoke it, and it needs no access to your browsing data at install.
 
 ## Features
 
-- **Configurable destinations**: URL templates with a `{term}` placeholder, each with its own label/icon. Tab reuse comes for free.
-- **Quick-search shortcuts**: highlight text on any page and press a slot shortcut to search it in one of your first four destinations — no widget needed.
-- **On-demand widget**: press the toggle shortcut to summon a search panel on the current tab — any highlighted text is pre-filled into the search box. Press Escape or ✕ to dismiss.
-- **Toolbar icon**: clicking Context in your toolbar (or the Extensions menu) opens its settings page.
+- **A panel in your toolbar**: click the Context icon (or press the shortcut) to open a search box with your highlighted text already filled in, then pick where to send it.
+- **Configurable destinations**: URL templates with a `{term}` placeholder, each with its own label and icon. Add and edit them right in the panel.
+- **Quick-search shortcuts**: highlight text and press a slot shortcut to search one of your first four destinations without opening anything.
 - **Right-click context menu**: highlight text on any page → search it in any configured destination.
+- **Tab reuse**: Context reopens the destination in an existing tab on that site instead of piling up duplicates. Toggle it off per destination.
 - **Domain-only toggle**: strip `user@acme.com` to `acme.com` before searching.
-- **JSON backup / restore** for your settings.
+- **JSON backup / restore** for your destinations.
 
 Context deliberately keeps no history of what you search — it just opens URLs.
 
 ## Permissions
 
-Context uses `activeTab`: it can only touch a page at the moment you invoke it, on that tab only, and the grant expires on navigation. There are no host permissions and no content scripts — nothing runs anywhere until you press a shortcut. The `tabs` permission is used solely to find an existing tab to reuse instead of opening a duplicate.
+Context uses `activeTab`: it can only read a page at the moment you invoke it, on that one tab, and the grant expires on navigation. There are no host permissions and no content scripts. The `tabs` permission is used solely to find an existing tab to reuse instead of opening a duplicate.
 
 ## Installation
 
@@ -26,41 +26,49 @@ Context uses `activeTab`: it can only touch a page at the moment you invoke it, 
 2. Open Chrome and navigate to `chrome://extensions`
 3. Enable **Developer mode** (top-right)
 4. Click **Load unpacked** and select the project folder
-5. Pin the Context icon in your Chrome toolbar (puzzle-piece menu → pin Context) for one-click access to settings
+5. Pin the Context icon in your Chrome toolbar (puzzle-piece menu → pin Context)
 
-Gmail is seeded as a default destination so Context is useful immediately. Add your own in the options page.
+Google and Gmail are seeded as default destinations so the panel does something useful immediately, and the settings page opens on first install with a walkthrough.
 
 To pick up new changes after a `git pull`, go to `chrome://extensions` and click the reload icon on the Context card.
 
-## Keyboard shortcuts
+## Using it
 
-Shortcuts are managed by Chrome at `chrome://extensions/shortcuts` (the options page links there). Defaults:
+1. **Add a destination** — open the panel, go to **Destinations**, press **+**. The URL template is the trick: run a search on the site, copy the resulting URL, and replace your search words with `{term}`.
+   - `https://www.google.com/search?q={term}`
+   - `https://mail.google.com/mail/u/0/#search/{term}`
+   - `https://github.com/search?q={term}&type=issues`
+2. **Highlight text on any page** — a name, an email address, a ticket ID.
+3. **Search it** — open the panel (your selection is pre-filled) and click a destination, or right-click → **Context**, or press a quick-search shortcut.
 
-- **Toggle widget** — `Ctrl+M` (`⌘M` on Mac; if macOS reserves it for window-minimize, rebind it). Any highlighted text is pre-filled when the widget opens.
+### Keyboard shortcuts
+
+Chrome owns these bindings — that's why Context needs no access to the sites you visit. View them on the settings page; change them at `chrome://extensions/shortcuts`. Defaults:
+
+- **Open the Context panel** — `Ctrl+M` (`⌘M` on Mac; if macOS reserves it for window-minimize, rebind it)
 - **Quick-search slot 1 / 2** — `Alt+1` / `Alt+2` (`⌥1` / `⌥2` on Mac)
-- **Quick-search slots 3 and 4** — unbound by default; assign keys (e.g. `Alt+3` / `Alt+4`) in `chrome://extensions/shortcuts`
+- **Quick-search slots 3 and 4** — unbound by default; assign keys (e.g. `Alt+3` / `Alt+4`) if you want them
 
-Quick-search slots map to your first four destinations, in options-page order.
+Quick-search slots map to your first four destinations, in panel order.
 
-## Configuring
+### Destination options
 
-Open the options page by clicking ⚙ in the widget, or via `chrome://extensions → Context → Details → Extension options`.
-
-### Destinations — what Context searches
-
-Each destination needs:
-
-- **Label** + **Icon** — how the button looks in the widget. Icon is just a character — paste any emoji (`Cmd+Ctrl+Space` on Mac, `Win+.` on Windows) or symbol from [emojipedia.org](https://emojipedia.org).
-- **URL template** — a URL with `{term}` as the search placeholder. Examples:
-  - `https://mail.google.com/mail/u/0/#search/{term}`
-  - `https://github.com/search?q={term}&type=issues`
-  - `https://www.google.com/search?q={term}`
+- **Label** + **Icon** — how the destination looks in the panel. Icon is just a character — paste any emoji (`Cmd+Ctrl+Space` on Mac, `Win+.` on Windows) or symbol from [emojipedia.org](https://emojipedia.org).
+- **URL template** — a URL with `{term}` as the search placeholder.
 - **Encoding** — how `{term}` is encoded into the URL:
   - **Plain** (URL-encode) — works for most search URLs
   - **Salesforce componentDef (base64)** — wraps the term in a Lightning search payload and base64-encodes it. Use with a template like `https://YOUR-INSTANCE.lightning.force.com/one/one.app#{term}`.
   - **Raw** — substitute the term verbatim
-- **Always open new tab** — by default Context reuses an existing tab matching the destination's hostname. Turn this on for destinations where you'd rather get a fresh tab every time.
+- **Always open a new tab** — off by default, so Context reuses an existing tab on that hostname.
 
 ## Backup
 
-The options page can **Export / Import settings** — your destinations — as a JSON file. Share it with a coworker or move your config between machines. Back up before uninstalling — Chrome wipes local storage on a full uninstall/reinstall.
+The settings page can **Export / Import destinations** as a JSON file. Share it with a coworker or move your config between machines. Back up before uninstalling — Chrome wipes local storage on a full uninstall/reinstall.
+
+## Layout
+
+- `manifest.json` — MV3 manifest: popup, background worker, and the Chrome-managed commands.
+- `src/popup.*` — the toolbar panel: search, destination list, and the add/edit form.
+- `src/options.*` — settings page: getting started, shortcut bindings, backup.
+- `src/background.js` — context menus, quick-search commands, tab reuse.
+- `src/storage.js` — shared settings/URL helpers.

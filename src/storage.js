@@ -1,24 +1,34 @@
 // Context — Shared storage helpers
-// Loaded as a classic script (no modules) from the injected widget, the
-// background worker, and the options page.
+// Loaded as a classic script (no modules) from the popup, the background
+// worker, and the settings page.
 // Exposes everything on globalThis.CtxStorage.
 
 (function () {
   "use strict";
 
-  // Idempotent: the background re-injects this file on every widget summon.
   if (globalThis.CtxStorage) return;
 
   const SETTINGS_KEY = "settings";
 
+  // Seeded on install so the panel does something useful before the user has
+  // configured anything — and so the first two quick-search slots are live.
   const DEFAULT_SETTINGS = {
     destinations: [
+      {
+        id: "google",
+        label: "Google",
+        icon: "🔍",
+        urlTemplate: "https://www.google.com/search?q={term}",
+        encoding: "plain",
+        openMode: "reuse",
+      },
       {
         id: "gmail",
         label: "Gmail",
         icon: "✉",
         urlTemplate: "https://mail.google.com/mail/u/0/#search/{term}",
         encoding: "plain",
+        openMode: "reuse",
       },
     ],
   };

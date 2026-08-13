@@ -1,9 +1,11 @@
 // Context — Background Service Worker
-// The brain of the activeTab model:
-// - Handles the keyboard commands (toggle/grab/quick-search) and injects the
-//   on-demand widget into the active tab under the activeTab grant.
 // - Rebuilds the right-click "Context" submenu from configured destinations.
-// - Reuses tabs (OPEN_OR_REUSE_TAB) and opens the options page (OPEN_OPTIONS).
+// - Handles the quick-search keyboard slots (read the selection under an
+//   activeTab grant, then open the destination).
+// - Reuses tabs and opens the settings page on first install.
+//
+// The main UI is the toolbar popup (src/popup.html); nothing is injected into
+// pages except the one-line selection read below, and only when invoked.
 
 importScripts("storage.js");
 
@@ -41,9 +43,13 @@ async function doRebuildContextMenus() {
   }
 }
 
-chrome.runtime.onInstalled.addListener(async () => {
+// First install: open the settings page, which is where the getting-started
+// walkthrough lives. Without this, a new user has an icon and no idea what a
+// "destination" is.
+chrome.runtime.onInstalled.addListener(async (details) => {
   await S.seedDefaultsIfEmpty();
   rebuildContextMenus();
+  if (details.reason === "install") chrome.runtime.openOptionsPage();
 });
 
 chrome.runtime.onStartup.addListener(rebuildContextMenus);
@@ -70,45 +76,22 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
   openOrReuseTab(S.buildDestinationUrl(dest, selectedText), md);
 });
 
-// ---- Widget injection ----
-// Every entry point runs under an activeTab grant (keyboard command, toolbar
-// click), so scripting works on the current tab without host permissions.
-// The injected files are idempotent: widget.js defines globalThis.__ctxWidget
-// once, and the second executeScript invokes the requested method.
-
-async function widgetCall(tabId, method) {
-  await chrome.scripting.insertCSS({ target: { tabId }, files: ["src/widget.css"] });
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    files: ["src/storage.js", "src/widget.js"],
-  });
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    func: (m) => globalThis.__ctxWidget && globalThis.__ctxWidget[m](),
-    args: [method],
-  });
-}
-
-// ---- Keyboard commands ----
+// ---- Quick-search commands ----
 // Invoking a commands-API shortcut grants activeTab on the current tab, which
-// is what lets us inject without host permissions. The widget pre-fills any
-// highlighted text when it opens, so summoning and grabbing are one command.
+// is what lets us read the selection without any host permission.
 
 chrome.commands.onCommand.addListener(async (command, tab) => {
   if (!tab || tab.id == null) return;
+  const slot = command.match(/^quick-search-([1-4])$/);
+  if (!slot) return;
   try {
-    if (command === "toggle-widget") {
-      await widgetCall(tab.id, "toggle");
-      return;
-    }
-    const slot = command.match(/^quick-search-([1-4])$/);
-    if (slot) await quickSearch(tab.id, Number(slot[1]) - 1);
+    await quickSearch(tab.id, Number(slot[1]) - 1);
   } catch (_) {
-    // Restricted page (chrome://, Web Store, PDF viewer): nothing to inject into.
+    // Restricted page (chrome://, Web Store, PDF viewer): nothing to read.
   }
 });
 
-// Quick-search slot N = the Nth configured destination, in options-page order.
+// Quick-search slot N = the Nth configured destination, in panel order.
 async function quickSearch(tabId, index) {
   const settings = await S.getSettings();
   const dest = settings.destinations && settings.destinations[index];
@@ -139,15 +122,6 @@ function openOrReuseTab(url, matchDomain) {
     }
   });
 }
-
-// ---- Toolbar icon ----
-// Clicking the icon (or picking Context from the Extensions menu) opens
-// settings. Summoning the widget is the toggle-widget keyboard command, which
-// works on every page — including ones where the icon isn't visible.
-
-chrome.action.onClicked.addListener(() => {
-  chrome.runtime.openOptionsPage();
-});
 
 // ---- Messages ----
 
