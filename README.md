@@ -8,7 +8,8 @@ Context is keyboard-first and permission-light: nothing runs on any page until y
 
 - **Configurable destinations**: URL templates with a `{term}` placeholder, each with its own label/icon. Tab reuse comes for free.
 - **Quick-search shortcuts**: highlight text on any page and press a slot shortcut to search it in one of your first four destinations — no widget needed.
-- **On-demand widget**: press the toggle shortcut (or click the toolbar icon) to summon a search panel on the current tab — any highlighted text is pre-filled into the search box. Press Escape or ✕ to dismiss.
+- **On-demand widget**: press the toggle shortcut to summon a search panel on the current tab — any highlighted text is pre-filled into the search box. Press Escape or ✕ to dismiss.
+- **Toolbar icon**: clicking Context in your toolbar (or the Extensions menu) opens its settings page.
 - **Right-click context menu**: highlight text on any page → search it in any configured destination.
 - **Domain-only toggle**: strip `user@acme.com` to `acme.com` before searching.
 - **JSON backup / restore** for your settings.
@@ -25,7 +26,7 @@ Context uses `activeTab`: it can only touch a page at the moment you invoke it, 
 2. Open Chrome and navigate to `chrome://extensions`
 3. Enable **Developer mode** (top-right)
 4. Click **Load unpacked** and select the project folder
-5. Pin the Context icon in your Chrome toolbar (puzzle-piece menu → pin Context) so you can click it to toggle the widget anywhere
+5. Pin the Context icon in your Chrome toolbar (puzzle-piece menu → pin Context) for one-click access to settings
 
 Gmail is seeded as a default destination so Context is useful immediately. Add your own in the options page.
 
@@ -35,9 +36,9 @@ To pick up new changes after a `git pull`, go to `chrome://extensions` and click
 
 Shortcuts are managed by Chrome at `chrome://extensions/shortcuts` (the options page links there). Defaults:
 
-- **Toggle widget** — `Ctrl+M` (`⌘M` on Mac; if macOS reserves it for window-minimize, rebind it). This is Chrome's "activate the extension" binding — same as clicking the toolbar icon. Any highlighted text is pre-filled when the widget opens.
-- **Quick-search slot 1 / 2** — `Ctrl+Shift+1` / `Ctrl+Shift+2` (`⌘⇧1` / `⌘⇧2` on Mac)
-- **Quick-search slots 3 and 4** — unbound by default; assign keys in `chrome://extensions/shortcuts`
+- **Toggle widget** — `Ctrl+M` (`⌘M` on Mac; if macOS reserves it for window-minimize, rebind it). Any highlighted text is pre-filled when the widget opens.
+- **Quick-search slot 1 / 2** — `Alt+1` / `Alt+2` (`⌥1` / `⌥2` on Mac)
+- **Quick-search slots 3 and 4** — unbound by default; assign keys (e.g. `Alt+3` / `Alt+4`) in `chrome://extensions/shortcuts`
 
 Quick-search slots map to your first four destinations, in options-page order.
 

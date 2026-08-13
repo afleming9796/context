@@ -90,15 +90,17 @@ async function widgetCall(tabId, method) {
 }
 
 // ---- Keyboard commands ----
-// The widget toggle has no custom command: Chrome's built-in _execute_action
-// (bound to a key in the manifest) "clicks" the toolbar icon, which lands in
-// action.onClicked below — one code path for keyboard and mouse. The widget
-// itself pre-fills any highlighted text when it opens, so the only custom
-// commands left are the quick-search slots.
+// Invoking a commands-API shortcut grants activeTab on the current tab, which
+// is what lets us inject without host permissions. The widget pre-fills any
+// highlighted text when it opens, so summoning and grabbing are one command.
 
 chrome.commands.onCommand.addListener(async (command, tab) => {
   if (!tab || tab.id == null) return;
   try {
+    if (command === "toggle-widget") {
+      await widgetCall(tab.id, "toggle");
+      return;
+    }
     const slot = command.match(/^quick-search-([1-4])$/);
     if (slot) await quickSearch(tab.id, Number(slot[1]) - 1);
   } catch (_) {
@@ -139,19 +141,12 @@ function openOrReuseTab(url, matchDomain) {
 }
 
 // ---- Toolbar icon ----
-// Click toggles the widget on the active tab. If we can't inject there
-// (chrome:// pages, the Web Store), settings are the useful fallback.
+// Clicking the icon (or picking Context from the Extensions menu) opens
+// settings. Summoning the widget is the toggle-widget keyboard command, which
+// works on every page — including ones where the icon isn't visible.
 
-chrome.action.onClicked.addListener(async (tab) => {
-  try {
-    if (tab && tab.id != null) {
-      await widgetCall(tab.id, "toggle");
-    } else {
-      chrome.runtime.openOptionsPage();
-    }
-  } catch (_) {
-    chrome.runtime.openOptionsPage();
-  }
+chrome.action.onClicked.addListener(() => {
+  chrome.runtime.openOptionsPage();
 });
 
 // ---- Messages ----

@@ -18,7 +18,7 @@
   ],
   "options_page": "src/options.html",
   "action": {
-    "default_title": "Toggle Context widget",
+    "default_title": "Context settings",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
@@ -30,23 +30,22 @@
     "service_worker": "src/background.js"
   },
   "commands": {
-    "_execute_action": {
+    "toggle-widget": {
       "suggested_key": {
         "default": "Ctrl+M",
         "mac": "Command+M"
-      }
+      },
+      "description": "Toggle the Context widget (pre-fills highlighted text)"
     },
     "quick-search-1": {
       "suggested_key": {
-        "default": "Ctrl+Shift+1",
-        "mac": "Command+Shift+1"
+        "default": "Alt+1"
       },
       "description": "Quick-search the highlighted text in destination 1"
     },
     "quick-search-2": {
       "suggested_key": {
-        "default": "Ctrl+Shift+2",
-        "mac": "Command+Shift+2"
+        "default": "Alt+2"
       },
       "description": "Quick-search the highlighted text in destination 2"
     },
