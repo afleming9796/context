@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Context",
-  "version": "3.1.0",
-  "description": "Configurable per-site search widget with context-menu search",
+  "version": "5.0.0",
+  "description": "Highlight text and search it anywhere — your own destinations, one keystroke away",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -11,15 +11,15 @@
   },
   "permissions": [
     "storage",
-    "tabs",
-    "contextMenus"
-  ],
-  "host_permissions": [
-    "<all_urls>"
+    "contextMenus",
+    "activeTab",
+    "scripting",
+    "tabs"
   ],
   "options_page": "src/options.html",
   "action": {
-    "default_title": "Toggle Context widget",
+    "default_title": "Context",
+    "default_popup": "src/popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
@@ -27,15 +27,39 @@
       "128": "icons/icon-128.png"
     }
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/storage.js", "src/content.js"],
-      "css": ["src/content.css"],
-      "run_at": "document_idle"
-    }
-  ],
   "background": {
     "service_worker": "src/background.js"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+M",
+        "mac": "Command+M"
+      }
+    },
+    "quick-search-1": {
+      "suggested_key": {
+        "default": "Alt+1"
+      },
+      "description": "Quick-search the highlighted text in destination 1"
+    },
+    "quick-search-2": {
+      "suggested_key": {
+        "default": "Alt+2"
+      },
+      "description": "Quick-search the highlighted text in destination 2"
+    },
+    "quick-search-3": {
+      "suggested_key": {
+        "default": "Alt+3"
+      },
+      "description": "Quick-search the highlighted text in destination 3"
+    },
+    "quick-search-4": {
+      "description": "Quick-search the highlighted text in destination 4"
+    },
+    "quick-search-5": {
+      "description": "Quick-search the highlighted text in destination 5"
+    }
   }
 }
