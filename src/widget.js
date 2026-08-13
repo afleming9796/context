@@ -5,9 +5,9 @@
 // navigation — there is no persistent content script and no host access.
 //
 // The background worker injects storage.js + this file, then calls
-// globalThis.__ctxWidget.toggle() / .grab() in a second executeScript.
-// This file only defines the widget (idempotently); it takes no action on
-// its own. Escape or the ✕ button dismisses the panel.
+// globalThis.__ctxWidget.toggle() in a second executeScript. This file only
+// defines the widget (idempotently); it takes no action on its own. Opening
+// the widget pre-fills any highlighted text. Escape or ✕ dismisses it.
 
 (function () {
   "use strict";
@@ -55,6 +55,8 @@
   }
 
   async function show() {
+    // Read the selection BEFORE rendering — focusing our input clears it.
+    const sel = String(window.getSelection()).trim();
     const settings = await S.getSettings();
     if (!panel) {
       panel = document.createElement("div");
@@ -130,6 +132,7 @@
       if (e.key === "Enter" && settings.destinations.length) go(settings.destinations[0]);
     });
 
+    if (sel) input.value = sel;
     attachHeaderHandlers();
     input.focus();
   }
@@ -155,16 +158,5 @@
     else await show();
   }
 
-  async function grab() {
-    // Read the selection BEFORE rendering — focusing our input clears it.
-    const sel = String(window.getSelection()).trim();
-    await show();
-    const input = panel && panel.querySelector(".ctx-search-input");
-    if (input && sel) {
-      input.value = sel;
-      input.focus();
-    }
-  }
-
-  globalThis.__ctxWidget = { toggle, grab };
+  globalThis.__ctxWidget = { toggle };
 })();

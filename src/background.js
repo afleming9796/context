@@ -90,18 +90,15 @@ async function widgetCall(tabId, method) {
 }
 
 // ---- Keyboard commands ----
+// The widget toggle has no custom command: Chrome's built-in _execute_action
+// (bound to a key in the manifest) "clicks" the toolbar icon, which lands in
+// action.onClicked below — one code path for keyboard and mouse. The widget
+// itself pre-fills any highlighted text when it opens, so the only custom
+// commands left are the quick-search slots.
 
 chrome.commands.onCommand.addListener(async (command, tab) => {
   if (!tab || tab.id == null) return;
   try {
-    if (command === "toggle-widget") {
-      await widgetCall(tab.id, "toggle");
-      return;
-    }
-    if (command === "grab-selection") {
-      await widgetCall(tab.id, "grab");
-      return;
-    }
     const slot = command.match(/^quick-search-([1-4])$/);
     if (slot) await quickSearch(tab.id, Number(slot[1]) - 1);
   } catch (_) {

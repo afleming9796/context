@@ -103,8 +103,9 @@
     shortcutsEl.innerHTML = "";
 
     const labelFor = (name) => {
-      if (name === "toggle-widget") return "Toggle widget on this tab";
-      if (name === "grab-selection") return "Open widget with highlighted text";
+      // _execute_action is Chrome's built-in "activate the extension" command;
+      // for Context that toggles the widget (pre-filled with any selection).
+      if (name === "_execute_action") return "Toggle widget on this tab";
       const slot = name.match(/^quick-search-([1-4])$/);
       if (slot) {
         const dest = state.destinations[Number(slot[1]) - 1];
@@ -117,7 +118,7 @@
 
     for (const c of commands) {
       const label = labelFor(c.name);
-      if (!label) continue; // skip _execute_action and unknowns
+      if (!label) continue; // skip unknowns
       const row = document.createElement("div");
       row.className = "shortcut-row";
       row.innerHTML = `

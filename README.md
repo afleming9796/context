@@ -8,7 +8,7 @@ Context is keyboard-first and permission-light: nothing runs on any page until y
 
 - **Configurable destinations**: URL templates with a `{term}` placeholder, each with its own label/icon. Tab reuse comes for free.
 - **Quick-search shortcuts**: highlight text on any page and press a slot shortcut to search it in one of your first four destinations — no widget needed.
-- **On-demand widget**: press the toggle shortcut (or click the toolbar icon) to summon a search panel on the current tab; press Escape or ✕ to dismiss it. Grab the highlighted text into it with the grab shortcut.
+- **On-demand widget**: press the toggle shortcut (or click the toolbar icon) to summon a search panel on the current tab — any highlighted text is pre-filled into the search box. Press Escape or ✕ to dismiss.
 - **Right-click context menu**: highlight text on any page → search it in any configured destination.
 - **Domain-only toggle**: strip `user@acme.com` to `acme.com` before searching.
 - **JSON backup / restore** for your settings.
@@ -35,8 +35,7 @@ To pick up new changes after a `git pull`, go to `chrome://extensions` and click
 
 Shortcuts are managed by Chrome at `chrome://extensions/shortcuts` (the options page links there). Defaults:
 
-- **Toggle widget** — `Ctrl+M` (`⌘M` on Mac; if macOS reserves it for window-minimize, rebind it)
-- **Grab highlighted text into the widget** — `Ctrl+B` / `⌘B`
+- **Toggle widget** — `Ctrl+M` (`⌘M` on Mac; if macOS reserves it for window-minimize, rebind it). This is Chrome's "activate the extension" binding — same as clicking the toolbar icon. Any highlighted text is pre-filled when the widget opens.
 - **Quick-search slot 1 / 2** — `Ctrl+Shift+1` / `Ctrl+Shift+2` (`⌘⇧1` / `⌘⇧2` on Mac)
 - **Quick-search slots 3 and 4** — unbound by default; assign keys in `chrome://extensions/shortcuts`
 
