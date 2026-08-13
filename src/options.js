@@ -1,6 +1,6 @@
 // Context — Settings page
-// Destinations are managed in the popup; this page covers onboarding,
-// the (Chrome-owned) shortcut bindings, and backup.
+// Destinations are managed in the popup; this page covers onboarding and
+// the (Chrome-owned) shortcut bindings.
 
 (function () {
   "use strict";
@@ -9,13 +9,6 @@
 
   let state = { destinations: [] };
   const shortcutsEl = document.getElementById("shortcuts");
-  const statusEl = document.getElementById("status");
-
-  function flash(msg) {
-    statusEl.textContent = msg;
-    statusEl.classList.add("visible");
-    setTimeout(() => statusEl.classList.remove("visible"), 1500);
-  }
 
   // ---- Shortcuts (read-only; chrome.commands has no setter by design) ----
 
@@ -25,7 +18,7 @@
 
     const labelFor = (name) => {
       if (name === "_execute_action") return "Open the Context panel";
-      const slot = name.match(/^quick-search-([1-4])$/);
+      const slot = name.match(/^quick-search-([1-5])$/);
       if (!slot) return null;
       const dest = state.destinations[Number(slot[1]) - 1];
       return dest
@@ -58,49 +51,6 @@
 
   document.getElementById("open-shortcuts").addEventListener("click", () => {
     chrome.tabs.create({ url: "chrome://extensions/shortcuts" });
-  });
-
-  // ---- Backup ----
-
-  function download(filename, data) {
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  function dateStamp() {
-    return new Date().toISOString().slice(0, 10);
-  }
-
-  document.getElementById("export-settings").addEventListener("click", async () => {
-    download(`context-destinations-${dateStamp()}.json`, await S.exportSettingsBackup());
-  });
-
-  document.getElementById("import-settings").addEventListener("click", () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json,application/json";
-    input.addEventListener("change", async () => {
-      const file = input.files[0];
-      if (!file) return;
-      try {
-        await S.importBackup(JSON.parse(await file.text()));
-        state = await S.getSettings();
-        await renderShortcuts();
-        flash("Imported");
-      } catch (e) {
-        flash("Import failed: " + e.message);
-      }
-    });
-    input.click();
   });
 
   // ---- Init ----

@@ -8,11 +8,10 @@ Context is keyboard-first and permission-light. Nothing runs on any page until y
 
 - **A panel in your toolbar**: click the Context icon (or press the shortcut) to open a search box with your highlighted text already filled in, then pick where to send it.
 - **Configurable destinations**: URL templates with a `{term}` placeholder, each with its own label and icon. Add and edit them right in the panel.
-- **Quick-search shortcuts**: highlight text and press a slot shortcut to search one of your first four destinations without opening anything.
+- **Quick-search shortcuts**: highlight text and press a slot shortcut to search one of your first five destinations without opening anything.
 - **Right-click context menu**: highlight text on any page → search it in any configured destination.
 - **Tab reuse**: Context reopens the destination in an existing tab on that site instead of piling up duplicates. Toggle it off per destination.
 - **Domain-only toggle**: strip `user@acme.com` to `acme.com` before searching.
-- **JSON backup / restore** for your destinations.
 
 Context deliberately keeps no history of what you search — it just opens URLs.
 
@@ -46,10 +45,12 @@ To pick up new changes after a `git pull`, go to `chrome://extensions` and click
 Chrome owns these bindings — that's why Context needs no access to the sites you visit. View them on the settings page; change them at `chrome://extensions/shortcuts`. Defaults:
 
 - **Open the Context panel** — `Ctrl+M` (`⌘M` on Mac; if macOS reserves it for window-minimize, rebind it)
-- **Quick-search slot 1 / 2** — `Alt+1` / `Alt+2` (`⌥1` / `⌥2` on Mac)
-- **Quick-search slots 3 and 4** — unbound by default; assign keys (e.g. `Alt+3` / `Alt+4`) if you want them
+- **Quick-search slots 1–3** — `Alt+1` / `Alt+2` / `Alt+3` (`⌥1`–`⌥3` on Mac)
+- **Quick-search slots 4 and 5** — unbound by default; assign keys (e.g. `Alt+4` / `Alt+5`) if you want them
 
-Quick-search slots map to your first four destinations, in panel order.
+Chrome allows an extension to suggest at most four default keys, and Context spends them on opening the panel plus the first three slots — hence slots 4 and 5 arriving unbound rather than unavailable.
+
+Quick-search slots map to your first five destinations, in panel order.
 
 ### Destination options
 
@@ -61,14 +62,10 @@ Quick-search slots map to your first four destinations, in panel order.
   - **Raw** — substitute the term verbatim
 - **Always open a new tab** — off by default, so Context reuses an existing tab on that hostname.
 
-## Backup
-
-The settings page can **Export / Import destinations** as a JSON file. Share it with a coworker or move your config between machines. Back up before uninstalling — Chrome wipes local storage on a full uninstall/reinstall.
-
 ## Layout
 
 - `manifest.json` — MV3 manifest: popup, background worker, and the Chrome-managed commands.
 - `src/popup.*` — the toolbar panel: search, destination list, and the add/edit form.
-- `src/options.*` — settings page: getting started, shortcut bindings, backup.
+- `src/options.*` — settings page: getting started and shortcut bindings.
 - `src/background.js` — context menus, quick-search commands, tab reuse.
 - `src/storage.js` — shared settings/URL helpers.

@@ -50,10 +50,16 @@
       "description": "Quick-search the highlighted text in destination 2"
     },
     "quick-search-3": {
+      "suggested_key": {
+        "default": "Alt+3"
+      },
       "description": "Quick-search the highlighted text in destination 3"
     },
     "quick-search-4": {
       "description": "Quick-search the highlighted text in destination 4"
+    },
+    "quick-search-5": {
+      "description": "Quick-search the highlighted text in destination 5"
     }
   }
 }

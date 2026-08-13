@@ -12,6 +12,11 @@
   const $ = (sel) => document.querySelector(sel);
 
   const TIPS_KEY = "tipsDismissed";
+  // Quick-search slots, matching the quick-search-N commands in the manifest.
+  // Chrome allows at most 4 suggested keys across all commands, so only slots
+  // 1-3 ship bound (the fourth default goes to opening the panel); 4 and 5 are
+  // there for the user to bind at chrome://extensions/shortcuts.
+  const SLOT_COUNT = 5;
 
   let state = { destinations: [] };
   let editingId = null; // null = adding, otherwise the destination being edited
@@ -203,10 +208,11 @@
     const el = $("#slot-hint");
     const n = idx + 1;
     const link = `<a href="#" class="link" data-shortcuts>Chrome shortcut settings</a>`;
-    if (idx >= 4) {
+    if (idx >= SLOT_COUNT) {
       el.innerHTML =
-        `Destination ${n}. Only the first four get a quick-search shortcut, ` +
-        `so this one is reachable from the panel and the right-click menu.`;
+        `Destination ${n}. Only the first ${SLOT_COUNT} get a quick-search ` +
+        `shortcut, so this one is reachable from the panel and the ` +
+        `right-click menu.`;
       return;
     }
     const key = slotKeys[idx];
@@ -286,8 +292,8 @@
     } catch (_) {
       return;
     }
-    slotKeys = [1, 2, 3, 4].map((n) => {
-      const c = cmds.find((x) => x.name === `quick-search-${n}`);
+    slotKeys = Array.from({ length: SLOT_COUNT }, (_, i) => {
+      const c = cmds.find((x) => x.name === `quick-search-${i + 1}`);
       return c && c.shortcut ? c.shortcut : "";
     });
 

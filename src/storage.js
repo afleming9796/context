@@ -115,40 +115,6 @@
     return prefix + "-" + Math.random().toString(36).slice(2, 9);
   }
 
-  // Strip internal `id` from destinations for cleaner exports.
-  function stripInternals(settings) {
-    return {
-      destinations: (settings.destinations || []).map(
-        ({ id, matchDomain, ...rest }) => rest
-      ),
-    };
-  }
-
-  // Re-generate `id` on each destination when importing.
-  function addIds(settings) {
-    return {
-      destinations: (settings.destinations || []).map((d) => ({ id: d.id || uid("dest"), ...d })),
-    };
-  }
-
-  async function exportSettingsBackup() {
-    const settings = await getSettings();
-    return {
-      version: 1,
-      kind: "settings",
-      exportedAt: new Date().toISOString(),
-      settings: stripInternals(settings),
-    };
-  }
-
-  async function importBackup(data) {
-    if (!data || typeof data !== "object") throw new Error("invalid backup");
-    if (!data.settings) throw new Error("backup contains no settings");
-    return new Promise((resolve) => {
-      chrome.storage.local.set({ [SETTINGS_KEY]: addIds(data.settings) }, resolve);
-    });
-  }
-
   globalThis.CtxStorage = {
     DEFAULT_SETTINGS,
     SETTINGS_KEY,
@@ -159,7 +125,5 @@
     buildDestinationUrl,
     domainOf,
     uid,
-    exportSettingsBackup,
-    importBackup,
   };
 })();

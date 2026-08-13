@@ -36,7 +36,7 @@
           <ul class="ways">
             <li>Press <code id="k-open">⌘M</code> to open the panel with your highlighted text already filled in, then pick a destination.</li>
             <li>Right-click → <b>Context</b> → pick a destination.</li>
-            <li>Press <code>⌥1</code> or <code>⌥2</code> to jump straight to your first or second destination.</li>
+            <li>Press <code>⌥1</code>, <code>⌥2</code>, or <code>⌥3</code> to jump straight to one of your top destinations.</li>
           </ul>
         </li>
       </ol>
@@ -54,36 +54,12 @@
       </div>
       <p class="hint">
         Chrome owns these bindings — that's why Context needs no access to the
-        sites you visit. Quick-search slots map to your first four destinations,
+        sites you visit. Quick-search slots map to your first five destinations,
         in the order they appear in the panel. On macOS, <code>⌘M</code> may be
         reserved for window-minimize; rebind it if it won't take.
       </p>
       <div id="shortcuts" class="shortcut-rows"></div>
     </section>
-
-    <section class="backup">
-      <h2>Backup</h2>
-      <p class="hint">
-        Export your destinations to a JSON file to share them or move between
-        machines. Chrome wipes local storage on uninstall, so export before you
-        remove the extension.
-      </p>
-      <div class="actions">
-        <button id="export-settings">Export destinations</button>
-        <button id="import-settings">Import destinations</button>
-      </div>
-    </section>
-
-    <section class="privacy">
-      <h2>What Context can see</h2>
-      <p class="hint">
-        Nothing runs on any page until you invoke Context, and then only on that
-        one tab. It keeps no history of what you search, and sends nothing
-        anywhere — your destinations live in this browser's local storage.
-      </p>
-    </section>
-
-    <div id="status" class="status"></div>
 
     <script src="storage.js"></script>
     <script src="options.js"></script>

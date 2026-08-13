@@ -82,7 +82,7 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
 
 chrome.commands.onCommand.addListener(async (command, tab) => {
   if (!tab || tab.id == null) return;
-  const slot = command.match(/^quick-search-([1-4])$/);
+  const slot = command.match(/^quick-search-([1-5])$/);
   if (!slot) return;
   try {
     await quickSearch(tab.id, Number(slot[1]) - 1);
