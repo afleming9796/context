@@ -1,6 +1,9 @@
 // Context — Background Service Worker
-// - Rebuilds the right-click "Context" submenu from user-configured destinations.
-// - Handles OPEN_OR_REUSE_TAB from content/options and OPEN_OPTIONS requests.
+// The brain of the activeTab model:
+// - Handles the keyboard commands (toggle/grab/quick-search) and injects the
+//   on-demand widget into the active tab under the activeTab grant.
+// - Rebuilds the right-click "Context" submenu from configured destinations.
+// - Reuses tabs (OPEN_OR_REUSE_TAB) and opens the options page (OPEN_OPTIONS).
 
 importScripts("storage.js");
 
@@ -63,10 +66,63 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
   const dest = settings.destinations.find((d) => d.id === destId);
   if (!dest) return;
 
-  const term = selectedText;
+  const md = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
+  openOrReuseTab(S.buildDestinationUrl(dest, selectedText), md);
+});
+
+// ---- Widget injection ----
+// Every entry point runs under an activeTab grant (keyboard command, toolbar
+// click), so scripting works on the current tab without host permissions.
+// The injected files are idempotent: widget.js defines globalThis.__ctxWidget
+// once, and the second executeScript invokes the requested method.
+
+async function widgetCall(tabId, method) {
+  await chrome.scripting.insertCSS({ target: { tabId }, files: ["src/widget.css"] });
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    files: ["src/storage.js", "src/widget.js"],
+  });
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: (m) => globalThis.__ctxWidget && globalThis.__ctxWidget[m](),
+    args: [method],
+  });
+}
+
+// ---- Keyboard commands ----
+
+chrome.commands.onCommand.addListener(async (command, tab) => {
+  if (!tab || tab.id == null) return;
+  try {
+    if (command === "toggle-widget") {
+      await widgetCall(tab.id, "toggle");
+      return;
+    }
+    if (command === "grab-selection") {
+      await widgetCall(tab.id, "grab");
+      return;
+    }
+    const slot = command.match(/^quick-search-([1-4])$/);
+    if (slot) await quickSearch(tab.id, Number(slot[1]) - 1);
+  } catch (_) {
+    // Restricted page (chrome://, Web Store, PDF viewer): nothing to inject into.
+  }
+});
+
+// Quick-search slot N = the Nth configured destination, in options-page order.
+async function quickSearch(tabId, index) {
+  const settings = await S.getSettings();
+  const dest = settings.destinations && settings.destinations[index];
+  if (!dest) return;
+  const [res] = await chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => String(getSelection()).trim(),
+  });
+  const term = res && res.result;
+  if (!term) return;
   const md = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
   openOrReuseTab(S.buildDestinationUrl(dest, term), md);
-});
+}
 
 // ---- Tab reuse ----
 
@@ -86,27 +142,16 @@ function openOrReuseTab(url, matchDomain) {
 }
 
 // ---- Toolbar icon ----
-// Click the extension's toolbar icon to toggle the widget on the active tab.
-// If the active tab doesn't match any configured source (so there's no widget
-// to toggle), open the options page instead so the user can configure one.
+// Click toggles the widget on the active tab. If we can't inject there
+// (chrome:// pages, the Web Store), settings are the useful fallback.
 
 chrome.action.onClicked.addListener(async (tab) => {
-  if (!tab?.id) {
-    chrome.runtime.openOptionsPage();
-    return;
-  }
   try {
-    const settings = await S.getSettings();
-    const matched = S.matchSource(tab.url || "", settings.sources);
-    if (!matched) {
+    if (tab && tab.id != null) {
+      await widgetCall(tab.id, "toggle");
+    } else {
       chrome.runtime.openOptionsPage();
-      return;
     }
-    chrome.tabs.sendMessage(tab.id, { type: "TOGGLE_WIDGET" }, () => {
-      // If the content script isn't listening (e.g. the page hasn't finished
-      // loading or we don't have permission), fall back to options.
-      if (chrome.runtime.lastError) chrome.runtime.openOptionsPage();
-    });
   } catch (_) {
     chrome.runtime.openOptionsPage();
   }

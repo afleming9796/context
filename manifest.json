@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Context",
-  "version": "3.1.0",
-  "description": "Configurable per-site search widget with context-menu search",
+  "version": "4.0.0",
+  "description": "Highlight text and search it anywhere — configurable destinations, keyboard-first",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -11,11 +11,10 @@
   },
   "permissions": [
     "storage",
-    "tabs",
-    "contextMenus"
-  ],
-  "host_permissions": [
-    "<all_urls>"
+    "contextMenus",
+    "activeTab",
+    "scripting",
+    "tabs"
   ],
   "options_page": "src/options.html",
   "action": {
@@ -27,15 +26,43 @@
       "128": "icons/icon-128.png"
     }
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/storage.js", "src/content.js"],
-      "css": ["src/content.css"],
-      "run_at": "document_idle"
-    }
-  ],
   "background": {
     "service_worker": "src/background.js"
+  },
+  "commands": {
+    "toggle-widget": {
+      "suggested_key": {
+        "default": "Ctrl+M",
+        "mac": "Command+M"
+      },
+      "description": "Toggle the Context widget on this tab"
+    },
+    "grab-selection": {
+      "suggested_key": {
+        "default": "Ctrl+B",
+        "mac": "Command+B"
+      },
+      "description": "Open the widget with the highlighted text"
+    },
+    "quick-search-1": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+1",
+        "mac": "Command+Shift+1"
+      },
+      "description": "Quick-search the highlighted text in destination 1"
+    },
+    "quick-search-2": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+2",
+        "mac": "Command+Shift+2"
+      },
+      "description": "Quick-search the highlighted text in destination 2"
+    },
+    "quick-search-3": {
+      "description": "Quick-search the highlighted text in destination 3"
+    },
+    "quick-search-4": {
+      "description": "Quick-search the highlighted text in destination 4"
+    }
   }
 }

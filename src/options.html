@@ -8,21 +8,8 @@
   <body>
     <header>
       <h1>Context</h1>
-      <p class="sub">Configure where the widget appears and what it searches.</p>
+      <p class="sub">Configure what Context searches. Summon it anywhere with a keyboard shortcut.</p>
     </header>
-
-    <section>
-      <div class="section-head">
-        <h2>Where does Context appear?</h2>
-        <button id="add-source" class="primary">+ Add page</button>
-      </div>
-      <p class="hint">
-        URL patterns that decide where the widget shows up. Use <code>*</code> as a
-        wildcard, e.g. <code>https://github.com/*/issues*</code> or
-        <code>https://*.atlassian.net/browse/*</code>.
-      </p>
-      <div id="sources" class="rows"></div>
-    </section>
 
     <section>
       <div class="section-head">
@@ -31,7 +18,9 @@
       </div>
       <p class="hint">
         Each destination becomes a button in the widget and a right-click menu
-        item. Use <code>{term}</code> as the placeholder in the URL template.
+        item. The first four also get quick-search slots — highlight text on
+        any page and press the slot's shortcut to search immediately. Use
+        <code>{term}</code> as the placeholder in the URL template.
         Choose <b>Salesforce componentDef</b> as the encoding to build a base64
         Lightning search payload — then use a template like
         <code>https://YOUR-INSTANCE.lightning.force.com/one/one.app#{term}</code>.
@@ -45,11 +34,14 @@
     <section>
       <div class="section-head">
         <h2>Keyboard shortcuts</h2>
+        <button id="open-shortcuts" class="primary">Change in Chrome…</button>
       </div>
       <p class="hint">
-        Click a shortcut field and press a key combo to record it. Shortcuts
-        require at least one modifier key (⌘, ⌃, ⌥). Click ✕ to clear.
-        Per-destination shortcuts grab highlighted text and search immediately.
+        Shortcuts are managed by Chrome (<code>chrome://extensions/shortcuts</code>)
+        so they work on every page without Context needing access to any site.
+        Quick-search slots map to your first four destinations, in order.
+        On macOS, if <code>⌘M</code> is taken by window-minimize, rebind the
+        toggle shortcut there.
       </p>
       <div id="shortcuts" class="shortcut-rows"></div>
     </section>
@@ -57,8 +49,8 @@
     <section class="backup">
       <h2>Backup</h2>
       <p class="hint">
-        Export your settings (sources + destinations) to a JSON file to share
-        or move your config between machines.
+        Export your destinations to a JSON file to share or move your config
+        between machines.
       </p>
       <div class="backup-group">
         <div class="backup-group-label">Settings</div>

@@ -5,9 +5,9 @@
 
   const S = globalThis.CtxStorage;
 
-  let state = { sources: [], destinations: [] };
-  const sourcesEl = document.getElementById("sources");
+  let state = { destinations: [] };
   const destsEl = document.getElementById("destinations");
+  const shortcutsEl = document.getElementById("shortcuts");
   const statusEl = document.getElementById("status");
 
   const uid = S.uid;
@@ -26,58 +26,8 @@
   // ---- Rendering ----
 
   function render() {
-    renderSources();
     renderDestinations();
     renderShortcuts();
-  }
-
-  function renderSources() {
-    sourcesEl.innerHTML = "";
-    if (!state.sources.length) {
-      sourcesEl.innerHTML = `<div class="empty">No sources yet. Add one to start showing the widget.</div>`;
-      return;
-    }
-    state.sources.forEach((src, idx) => {
-      const row = document.createElement("div");
-      row.className = "source-card";
-      row.innerHTML = `
-        <div class="source-top">
-          <input class="f-label" placeholder="Label (optional)" />
-          <input class="f-pattern" placeholder="https://example.com/path/*" />
-          <button class="del" title="Delete">✕</button>
-        </div>
-        <div class="source-bottom">
-          <label class="switch" title="Default the domain toggle to on — strips user@acme.com to acme.com">
-            <input type="checkbox" class="f-domain-cb" />
-            <span class="switch-track"><span class="switch-thumb"></span></span>
-            <span class="switch-label">Domain only by default</span>
-          </label>
-        </div>
-      `;
-      const label = row.querySelector(".f-label");
-      const pattern = row.querySelector(".f-pattern");
-      const domain = row.querySelector(".f-domain-cb");
-      label.value = src.label || "";
-      pattern.value = src.urlPattern || "";
-      domain.checked = !!src.domainOnlyDefault;
-      label.addEventListener("input", () => {
-        state.sources[idx].label = label.value;
-        persist();
-      });
-      pattern.addEventListener("input", () => {
-        state.sources[idx].urlPattern = pattern.value;
-        persist();
-      });
-      domain.addEventListener("change", () => {
-        state.sources[idx].domainOnlyDefault = domain.checked;
-        persist();
-      });
-      row.querySelector(".del").addEventListener("click", () => {
-        state.sources.splice(idx, 1);
-        persist().then(render);
-      });
-      sourcesEl.appendChild(row);
-    });
   }
 
   function renderDestinations() {
@@ -89,6 +39,7 @@
     state.destinations.forEach((dest, idx) => {
       const row = document.createElement("div");
       row.className = "dest-card";
+      const slot = idx < 4 ? `<span class="slot-badge" title="Quick-search slot ${idx + 1}">⌨ slot ${idx + 1}</span>` : "";
       row.innerHTML = `
         <div class="dest-top">
           <input class="f-label" placeholder="Label" />
@@ -98,6 +49,7 @@
             <option value="salesforce">Salesforce componentDef (base64)</option>
             <option value="raw">Raw (no encoding)</option>
           </select>
+          ${slot}
           <button class="del" title="Delete">✕</button>
         </div>
         <label class="field">
@@ -144,121 +96,51 @@
     });
   }
 
-  // ---- Shortcuts ----
+  // ---- Shortcuts (read-only; Chrome owns the bindings) ----
 
-  const shortcutsEl = document.getElementById("shortcuts");
-
-  function renderShortcuts() {
-    if (!state.shortcuts) state.shortcuts = {};
-    const sc = state.shortcuts;
+  async function renderShortcuts() {
+    const commands = await chrome.commands.getAll();
     shortcutsEl.innerHTML = "";
 
-    const globals = [
-      { key: "toggle", label: "Toggle widget open / closed" },
-      { key: "grabSelection", label: "Grab highlighted text into search bar" },
-    ];
-    for (const g of globals) {
-      const row = makeShortcutRow(g.label, sc[g.key] || "", (val) => {
-        state.shortcuts[g.key] = val;
-        persist();
-      });
-      shortcutsEl.appendChild(row);
-    }
+    const labelFor = (name) => {
+      if (name === "toggle-widget") return "Toggle widget on this tab";
+      if (name === "grab-selection") return "Open widget with highlighted text";
+      const slot = name.match(/^quick-search-([1-4])$/);
+      if (slot) {
+        const dest = state.destinations[Number(slot[1]) - 1];
+        return dest
+          ? `Quick-search: ${dest.icon || "→"} ${dest.label || "(unnamed)"}`
+          : `Quick-search slot ${slot[1]} — no destination yet`;
+      }
+      return null;
+    };
 
-    if (state.destinations.length) {
-      const sep = document.createElement("div");
-      sep.className = "shortcut-sep";
-      sep.textContent = "Per-destination quick search";
-      shortcutsEl.appendChild(sep);
-
-      // Global toggle: should per-destination shortcuts work everywhere
-      // (default), or only on configured source pages?
-      const everyRow = document.createElement("div");
-      everyRow.className = "shortcut-row";
-      everyRow.innerHTML = `
-        <span class="shortcut-label">Quick-search shortcuts work on any URL</span>
-        <label class="switch" title="When off, per-destination shortcuts only fire on pages matching a configured source">
-          <input type="checkbox" class="f-everywhere-cb" />
-          <span class="switch-track"><span class="switch-thumb"></span></span>
-        </label>
+    for (const c of commands) {
+      const label = labelFor(c.name);
+      if (!label) continue; // skip _execute_action and unknowns
+      const row = document.createElement("div");
+      row.className = "shortcut-row";
+      row.innerHTML = `
+        <span class="shortcut-label"></span>
+        <span class="shortcut-key"></span>
       `;
-      const everyCb = everyRow.querySelector(".f-everywhere-cb");
-      everyCb.checked = sc.everywhere !== false;
-      everyCb.addEventListener("change", () => {
-        state.shortcuts.everywhere = everyCb.checked;
-        persist();
-      });
-      shortcutsEl.appendChild(everyRow);
-    }
-    for (const dest of state.destinations) {
-      const row = makeShortcutRow(
-        `${dest.icon || "→"} ${dest.label}`,
-        dest.shortcut || "",
-        (val) => {
-          dest.shortcut = val;
-          persist();
-        }
-      );
+      row.querySelector(".shortcut-label").textContent = label;
+      const key = row.querySelector(".shortcut-key");
+      if (c.shortcut) {
+        key.textContent = c.shortcut;
+      } else {
+        key.textContent = "not set";
+        key.classList.add("unset");
+      }
       shortcutsEl.appendChild(row);
     }
   }
 
-  function makeShortcutRow(label, value, onChange) {
-    const row = document.createElement("div");
-    row.className = "shortcut-row";
-    row.innerHTML = `
-      <span class="shortcut-label">${label}</span>
-      <div class="shortcut-field">
-        <input type="text" class="shortcut-input" readonly
-               placeholder="Click to record" />
-        <button class="shortcut-clear" title="Clear shortcut">✕</button>
-      </div>
-    `;
-    const input = row.querySelector(".shortcut-input");
-    const clear = row.querySelector(".shortcut-clear");
-    input.value = S.formatShortcut(value);
-
-    input.addEventListener("focus", () => {
-      input.value = "";
-      input.placeholder = "Press keys...";
-      input.classList.add("recording");
-    });
-
-    input.addEventListener("keydown", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const combo = S.shortcutFromEvent(e);
-      if (!combo) return; // lone modifier, ignore
-      input.value = S.formatShortcut(combo);
-      input.classList.remove("recording");
-      input.blur();
-      onChange(combo);
-    });
-
-    input.addEventListener("blur", () => {
-      input.classList.remove("recording");
-      if (!input.value) input.value = S.formatShortcut(value);
-      input.placeholder = "Click to record";
-    });
-
-    clear.addEventListener("click", () => {
-      input.value = "";
-      onChange("");
-    });
-
-    return row;
-  }
+  document.getElementById("open-shortcuts").addEventListener("click", () => {
+    chrome.tabs.create({ url: "chrome://extensions/shortcuts" });
+  });
 
   // ---- Actions ----
-
-  document.getElementById("add-source").addEventListener("click", () => {
-    state.sources.push({
-      id: uid("src"),
-      label: "",
-      urlPattern: "",
-    });
-    persist().then(render);
-  });
 
   document.getElementById("add-dest").addEventListener("click", () => {
     state.destinations.push({
@@ -320,6 +202,7 @@
 
   (async () => {
     state = await S.seedDefaultsIfEmpty();
+    if (!state.destinations) state.destinations = [];
     render();
   })();
 })();

@@ -1,22 +1,23 @@
 # Context
 
-A Chrome extension for parameterized shortcuts/bookmarks, e.g. highight "Tommy" and select cmd+g to search for "Tommy" in a new or existing gmail tab. 
+A Chrome extension for parameterized shortcuts/bookmarks, e.g. highlight "Tommy" and press a shortcut to search for "Tommy" in a new or existing Gmail tab.
+
+Context is keyboard-first and permission-light: nothing runs on any page until you summon it, and it needs no access to site data at install.
 
 ## Features
 
-- **Configurable sources**: URL patterns (with `*` wildcards) decide where the widget appears. The widget is hidden everywhere else.
-- - **Persistent open/closed state**: close the widget on a source and it stays closed on every matching page across tabs and sessions.
 - **Configurable destinations**: URL templates with a `{term}` placeholder, each with its own label/icon. Tab reuse comes for free.
-- **Domain-only toggle**: strip `user@acme.com` to `acme.com` before searching. Default is per-source so it matches your workflow.
+- **Quick-search shortcuts**: highlight text on any page and press a slot shortcut to search it in one of your first four destinations — no widget needed.
+- **On-demand widget**: press the toggle shortcut (or click the toolbar icon) to summon a search panel on the current tab; press Escape or ✕ to dismiss it. Grab the highlighted text into it with the grab shortcut.
 - **Right-click context menu**: highlight text on any page → search it in any configured destination.
-- **Keyboard shortcuts** (configurable):
-  - Toggle the widget open/closed (default: `Cmd+M`)
-  - Grab highlighted text into the search bar (default: `Cmd+B`)
-  - Quick-search a destination with the highlighted text — works on any URL, not just configured sources
-- **Toolbar icon**: click the Context icon in your Chrome toolbar to toggle the widget on the current page.
+- **Domain-only toggle**: strip `user@acme.com` to `acme.com` before searching.
 - **JSON backup / restore** for your settings.
 
 Context deliberately keeps no history of what you search — it just opens URLs.
+
+## Permissions
+
+Context uses `activeTab`: it can only touch a page at the moment you invoke it, on that tab only, and the grant expires on navigation. There are no host permissions and no content scripts — nothing runs anywhere until you press a shortcut. The `tabs` permission is used solely to find an existing tab to reuse instead of opening a duplicate.
 
 ## Installation
 
@@ -26,25 +27,24 @@ Context deliberately keeps no history of what you search — it just opens URLs.
 4. Click **Load unpacked** and select the project folder
 5. Pin the Context icon in your Chrome toolbar (puzzle-piece menu → pin Context) so you can click it to toggle the widget anywhere
 
-Gmail is seeded as a default source and destination so the widget is useful immediately. Add your own in the options page.
+Gmail is seeded as a default destination so Context is useful immediately. Add your own in the options page.
 
 To pick up new changes after a `git pull`, go to `chrome://extensions` and click the reload icon on the Context card.
 
+## Keyboard shortcuts
+
+Shortcuts are managed by Chrome at `chrome://extensions/shortcuts` (the options page links there). Defaults:
+
+- **Toggle widget** — `Ctrl+M` (`⌘M` on Mac; if macOS reserves it for window-minimize, rebind it)
+- **Grab highlighted text into the widget** — `Ctrl+B` / `⌘B`
+- **Quick-search slot 1 / 2** — `Ctrl+Shift+1` / `Ctrl+Shift+2` (`⌘⇧1` / `⌘⇧2` on Mac)
+- **Quick-search slots 3 and 4** — unbound by default; assign keys in `chrome://extensions/shortcuts`
+
+Quick-search slots map to your first four destinations, in options-page order.
+
 ## Configuring
 
-Open the options page either by clicking the Context toolbar icon on a non-source page, or via `chrome://extensions → Context → Details → Extension options`.
-
-### Sources — where Context appears
-
-Each source is a URL pattern. Use `*` as a wildcard. Examples:
-
-- `https://github.com/*/issues*` — show on any GitHub repo's issues
-- `https://*.atlassian.net/browse/*` — show on every Jira ticket page
-- `https://mail.google.com/*` — show throughout Gmail
-
-Per-source options:
-
-- **Domain only by default** — set the domain-strip toggle to on by default for this source
+Open the options page by clicking ⚙ in the widget, or via `chrome://extensions → Context → Details → Extension options`.
 
 ### Destinations — what Context searches
 
@@ -61,12 +61,6 @@ Each destination needs:
   - **Raw** — substitute the term verbatim
 - **Always open new tab** — by default Context reuses an existing tab matching the destination's hostname. Turn this on for destinations where you'd rather get a fresh tab every time.
 
-### Keyboard shortcuts
-
-In the options page, click any shortcut field and press a key combo to record it. Shortcuts require at least one modifier key (⌘, ⌃, ⌥). Click ✕ to clear.
-
-Per-destination shortcuts grab the highlighted text on the page and search immediately — no widget interaction needed. By default they work on any URL, not just configured sources. Toggle that off in settings if you want them gated to source pages only.
-
 ## Backup
 
-The options page can **Export / Import settings** — sources, destinations, and shortcut bindings — as a JSON file. Share it with a coworker or move your config between machines. Back up before uninstalling — Chrome wipes local storage on a full uninstall/reinstall.
+The options page can **Export / Import settings** — your destinations — as a JSON file. Share it with a coworker or move your config between machines. Back up before uninstalling — Chrome wipes local storage on a full uninstall/reinstall.
