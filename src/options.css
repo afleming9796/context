@@ -179,6 +179,7 @@ input:focus, select:focus {
   gap: 12px;
 }
 .shortcut-label { font-size: 13px; color: #333; }
+.shortcut-note { color: #6b6b70; font-size: 12px; }
 .shortcut-field { display: flex; align-items: center; gap: 4px; }
 .shortcut-input {
   width: 150px;

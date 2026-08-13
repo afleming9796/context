@@ -36,8 +36,13 @@
       }
       const row = document.createElement("div");
       row.className = "shortcut-row";
-      row.innerHTML = `<span class="shortcut-label"></span><span class="shortcut-key"></span>`;
-      row.querySelector(".shortcut-label").textContent = label;
+      row.innerHTML = `<span class="shortcut-label"><span class="shortcut-note"></span></span><span class="shortcut-key"></span>`;
+      const labelEl = row.querySelector(".shortcut-label");
+      labelEl.prepend(label);
+      if (c.name === "_execute_action") {
+        labelEl.querySelector(".shortcut-note").textContent =
+          " (Highlighted text appears as search term)";
+      }
       const key = row.querySelector(".shortcut-key");
       if (c.shortcut) {
         key.textContent = c.shortcut;
