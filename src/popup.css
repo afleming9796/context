@@ -163,6 +163,13 @@ textarea { resize: vertical; }
 }
 .tip-close:hover { color: #27272a; background: #f4f4f5; }
 
+.shortcuts-tip {
+  margin-top: 10px;
+  font-size: 11px; color: #71717a; line-height: 1.4;
+}
+.shortcuts-tip a { color: #2563eb; text-decoration: none; }
+.shortcuts-tip a:hover { text-decoration: underline; }
+
 /* ---- Destinations list ---- */
 
 .toolbar { display: flex; align-items: center; gap: 6px; }

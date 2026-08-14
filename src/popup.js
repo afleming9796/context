@@ -94,6 +94,7 @@
     const has = state.destinations.length > 0;
     searchEmptyEl.hidden = has;
     destButtonsEl.hidden = !has;
+    $("#shortcuts-tip").hidden = !has;
     termEl.disabled = !has;
 
     state.destinations.forEach((dest, i) => {
@@ -103,12 +104,6 @@
       const label = document.createElement("span");
       label.textContent = dest.label || "(unnamed)";
       btn.append(label);
-      if (slotKeys[i]) {
-        const slot = document.createElement("span");
-        slot.className = "slot";
-        slot.textContent = slotKeys[i];
-        btn.appendChild(slot);
-      }
       btn.addEventListener("click", () => search(dest));
       destButtonsEl.appendChild(btn);
     });
@@ -320,6 +315,12 @@
   });
 
   $("#tip-more").addEventListener("click", (e) => {
+    e.preventDefault();
+    chrome.runtime.openOptionsPage();
+    window.close();
+  });
+
+  $("#shortcuts-tip-link").addEventListener("click", (e) => {
     e.preventDefault();
     chrome.runtime.openOptionsPage();
     window.close();
