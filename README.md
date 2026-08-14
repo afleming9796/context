@@ -40,6 +40,8 @@ To pick up new changes after a `git pull`, go to `chrome://extensions` and click
 2. **Highlight text on any page** — a name, an email address, a ticket ID.
 3. **Search it** — open the panel (your selection is pre-filled) and click a destination, or right-click → **Context**, or press a quick-search shortcut.
 
+The quick-search shortcuts also work *inside* the panel: type or edit a term in the box and press `⌥1`/`⌥2`/`⌥3` to send it straight to that destination — no tabbing or clicking. `Enter` sends it to your first destination.
+
 ### Keyboard shortcuts
 
 Chrome owns these bindings — that's why Context needs no access to the sites you visit. View them on the settings page; change them at `chrome://extensions/shortcuts`. Defaults:
@@ -50,7 +52,7 @@ Chrome owns these bindings — that's why Context needs no access to the sites y
 
 Chrome allows an extension to suggest at most four default keys, and Context spends them on opening the panel plus the first three slots — hence slots 4 and 5 arriving unbound rather than unavailable.
 
-Quick-search slots map to your first five destinations, in panel order.
+Quick-search slots map to your first five destinations, in panel order. They fire both from any page (using the highlighted text) and from inside the panel (using whatever is in the search box).
 
 ### Destination options
 

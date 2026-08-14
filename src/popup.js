@@ -24,6 +24,46 @@
   // and any of them can be cleared by the user, so we never advertise a key
   // we haven't confirmed with Chrome.
   let slotKeys = [];
+  // Same bindings, parsed once, so the panel can honour them while it has
+  // focus — typing a term and pressing the slot key searches what you typed.
+  let slotCombos = [];
+
+  // Chrome reports bindings as macOS symbols ("⌥1") or plus-form ("Alt+1").
+  function parseShortcut(str) {
+    if (!str) return null;
+    const m = { meta: false, ctrl: false, alt: false, shift: false };
+    let key = "";
+    if (/[⌘⌥⌃⇧]/.test(str)) {
+      for (const ch of str) {
+        if (ch === "⌘") m.meta = true;
+        else if (ch === "⌥") m.alt = true;
+        else if (ch === "⌃") m.ctrl = true;
+        else if (ch === "⇧") m.shift = true;
+        else key += ch;
+      }
+    } else {
+      const parts = str.split("+");
+      key = parts.pop() || "";
+      for (const p of parts) {
+        const l = p.trim().toLowerCase();
+        if (l === "command" || l === "meta") m.meta = true;
+        else if (l === "ctrl" || l === "control" || l === "macctrl") m.ctrl = true;
+        else if (l === "alt" || l === "option") m.alt = true;
+        else if (l === "shift") m.shift = true;
+      }
+    }
+    return { ...m, key: key.trim().toLowerCase() };
+  }
+
+  // Compare alphanumerics by e.code: Option+1 on macOS reports e.key "¡".
+  function eventMatches(e, sc) {
+    if (!sc) return false;
+    if (!!e.metaKey !== sc.meta || !!e.ctrlKey !== sc.ctrl ||
+        !!e.altKey !== sc.alt || !!e.shiftKey !== sc.shift) return false;
+    if (/^[0-9]$/.test(sc.key)) return e.code === `Digit${sc.key}`;
+    if (/^[a-z]$/.test(sc.key)) return e.code === `Key${sc.key.toUpperCase()}`;
+    return String(e.key).toLowerCase() === sc.key;
+  }
 
   const termEl = $("#term");
   const domainCb = $("#domain-cb");
@@ -121,6 +161,24 @@
 
   termEl.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && state.destinations.length) search(state.destinations[0]);
+  });
+
+  // Slot shortcuts work inside the panel too, so you can type a term and fire
+  // it at a destination without reaching for the mouse. Bound on the document
+  // so it works wherever focus sits in the Search view. Chrome suppresses its
+  // own command dispatch while the popup has focus; the background also
+  // ignores quick-search commands while a popup is open, so this can't
+  // double-fire and search the page selection as well.
+  document.addEventListener("keydown", (e) => {
+    if (!document.getElementById("tab-search").classList.contains("active")) return;
+    for (let i = 0; i < slotCombos.length; i++) {
+      if (!eventMatches(e, slotCombos[i])) continue;
+      const dest = state.destinations[i];
+      if (!dest) return;
+      e.preventDefault();
+      search(dest);
+      return;
+    }
   });
 
   $("#empty-add").addEventListener("click", () => openForm(null));
@@ -302,6 +360,7 @@
       const c = cmds.find((x) => x.name === `quick-search-${i + 1}`);
       return c && c.shortcut ? c.shortcut : "";
     });
+    slotCombos = slotKeys.map(parseShortcut);
 
     const open = cmds.find((c) => c.name === "_execute_action");
     $("#tip-key").textContent = open && open.shortcut ? open.shortcut : "the toolbar icon";

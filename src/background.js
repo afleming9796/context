@@ -84,12 +84,25 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
   if (!tab || tab.id == null) return;
   const slot = command.match(/^quick-search-([1-5])$/);
   if (!slot) return;
+  // The panel handles these itself while it's open, searching whatever the
+  // user typed. Bail out so we don't also fire one for the page selection.
+  if (await popupIsOpen()) return;
   try {
     await quickSearch(tab.id, Number(slot[1]) - 1);
   } catch (_) {
     // Restricted page (chrome://, Web Store, PDF viewer): nothing to read.
   }
 });
+
+async function popupIsOpen() {
+  try {
+    const contexts = await chrome.runtime.getContexts({ contextTypes: ["POPUP"] });
+    return contexts.length > 0;
+  } catch (_) {
+    // getContexts needs Chrome 116+; without it, assume closed and proceed.
+    return false;
+  }
+}
 
 // Quick-search slot N = the Nth configured destination, in panel order.
 async function quickSearch(tabId, index) {
