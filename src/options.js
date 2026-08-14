@@ -22,7 +22,7 @@
       if (!slot) return null;
       const dest = state.destinations[Number(slot[1]) - 1];
       return dest
-        ? `Quick-search: ${dest.icon || "→"} ${dest.label || "(unnamed)"}`
+        ? `Quick-search: ${dest.label || "(unnamed)"}`
         : `Quick-search slot ${slot[1]} — no destination yet`;
     };
 

@@ -100,11 +100,9 @@
       const btn = document.createElement("button");
       btn.className = "dest-btn";
       btn.title = dest.urlTemplate || "";
-      const icon = document.createElement("span");
-      icon.textContent = dest.icon || "→";
       const label = document.createElement("span");
       label.textContent = dest.label || "(unnamed)";
-      btn.append(icon, label);
+      btn.append(label);
       if (slotKeys[i]) {
         const slot = document.createElement("span");
         slot.className = "slot";
@@ -166,13 +164,11 @@
       const li = document.createElement("li");
       li.className = "dest-item";
       li.innerHTML = `
-        <span class="dest-icon"></span>
         <span class="dest-main">
           <span class="dest-label"></span>
           <div class="dest-url"></div>
         </span>
       `;
-      li.querySelector(".dest-icon").textContent = d.icon || "→";
       li.querySelector(".dest-label").textContent = d.label || "(unnamed)";
       li.querySelector(".dest-url").textContent = d.urlTemplate || "";
       if (slotKeys[i]) {
@@ -191,7 +187,6 @@
 
   // ---- Destination form ----
 
-  const fIcon = $("#f-icon");
   const fLabel = $("#f-label");
   const fTemplate = $("#f-template");
   const fEncoding = $("#f-encoding");
@@ -243,7 +238,6 @@
       ? `Edit destination ${idx + 1}`
       : "New destination";
     renderSlotHint(idx);
-    fIcon.value = dest ? dest.icon || "" : "";
     fLabel.value = dest ? dest.label || "" : "";
     fTemplate.value = dest ? dest.urlTemplate || "" : "";
     fEncoding.value = dest ? dest.encoding || "plain" : "plain";
@@ -251,14 +245,13 @@
     deleteBtn.hidden = !dest;
     validate();
     showView("form");
-    (dest ? fLabel : fIcon).focus();
+    fLabel.focus();
   }
 
   $("#form-cancel").addEventListener("click", () => showView("destinations"));
 
   saveBtn.addEventListener("click", async () => {
     const patch = {
-      icon: fIcon.value.trim() || "→",
       label: fLabel.value.trim(),
       urlTemplate: fTemplate.value.trim(),
       encoding: fEncoding.value,
