@@ -42,7 +42,14 @@ To pick up new changes after a `git pull`, go to `chrome://extensions` and click
 
 The quick-search shortcuts also work *inside* the panel: type or edit a term in the box and press `⌥1`/`⌥2`/`⌥3` to send it straight to that destination — no tabbing or clicking. `Enter` sends it to your first destination.
 
-Rebind a slot and the panel follows — it reads the live bindings rather than assuming the defaults. Two kinds of key can't be caught inside the panel, though: media keys, which Chrome never delivers to an extension window, and a binding with no modifier, which would fire while you type. Those still search highlighted text on a page, and the panel says so instead of leaving you with a key that appears to do nothing.
+Rebind a slot and the panel follows — it reads the live bindings rather than assuming the defaults.
+
+Some keys can't be caught inside the panel, though, and the panel says which rather than leaving you with a key that appears to do nothing:
+
+- **macOS menu shortcuts** — `⌘H`, `⌥⌘H`, `⌘M`, `⌘W`, `⌘Q`. From a page these fire the quick-search, because Chrome checks extension bindings ahead of the menu bar inside a browser window. The panel is its own window, with no such hook, so the menu bar gets there first and Chrome hides or minimises instead. (`⌘G` isn't a menu item, which is why it works in both places.)
+- **Media keys** — Chrome never delivers them to an extension window. They still work from a page.
+- **A binding with no modifier** — it would fire while you type in the box.
+- **`⌘Space` and `Alt+F4`** — the operating system takes these before Chrome sees them at all, so the slot won't fire anywhere.
 
 ### Keyboard shortcuts
 

@@ -115,11 +115,14 @@
         const slot = document.createElement("span");
         slot.className = "slot";
         slot.textContent = binding.shortcut;
-        // A binding the panel can't intercept still works on a page, so the
+        // A binding the panel can't intercept may still work on a page, so the
         // badge stays — the tooltip is where the caveat goes.
         if (binding.error) {
           slot.classList.add("slot-broken");
-          slot.title = `Works on a page, but not from this box — ${binding.error}.`;
+          slot.title =
+            binding.scope === "everywhere"
+              ? `This key never reaches Context — ${binding.error}.`
+              : `Works on a page, but not from this box — ${binding.error}.`;
         }
         btn.appendChild(slot);
       }
@@ -271,12 +274,19 @@
         `Destination ${n} has no keyboard shortcut yet. Assign one in ${link}.`;
       return;
     }
-    el.innerHTML = binding.error
-      ? `Destination ${n}. <code>${esc(binding.shortcut)}</code> searches the ` +
-        `highlighted text on a page, but can't search this panel's box — ` +
-        `${esc(binding.error)}. Pick another key in ${link}.`
-      : `Destination ${n}. Change keyboard shortcut from ` +
+    if (!binding.error) {
+      el.innerHTML =
+        `Destination ${n}. Change keyboard shortcut from ` +
         `<code>${esc(binding.shortcut)}</code> in ${link}.`;
+      return;
+    }
+    el.innerHTML =
+      `Destination ${n}. <code>${esc(binding.shortcut)}</code> ` +
+      (binding.scope === "everywhere"
+        ? `never reaches Context — ${esc(binding.error)}.`
+        : `searches highlighted text on a page, but can't search this ` +
+          `panel's box — ${esc(binding.error)}.`) +
+      ` Pick another key in ${link}.`;
   }
 
   // Binding strings and their failure reasons come from Chrome, but they land
@@ -365,12 +375,14 @@
       return K.describeBinding(c && c.shortcut ? c.shortcut : "");
     });
 
-    for (let i = 0; i < slotBindings.length; i++) {
-      if (!slotBindings[i].error) continue;
+    for (const [i, b] of slotBindings.entries()) {
+      if (!b.error) continue;
       console.error(
-        `Context: quick-search slot ${i + 1} is bound to "${slotBindings[i].shortcut}", ` +
-          `which the panel can't act on — ${slotBindings[i].error}. ` +
-          `It still searches the highlighted text on a page. Rebind it at ${SHORTCUTS_URL}.`
+        `Context: quick-search slot ${i + 1} is bound to "${b.shortcut}" — ${b.error}. ` +
+          (b.scope === "everywhere"
+            ? "The slot won't fire from the panel or from a page. "
+            : "It still searches the highlighted text on a page, but not this panel's box. ") +
+          `Rebind it at ${SHORTCUTS_URL}.`
       );
     }
     await claimSlots();
@@ -402,13 +414,16 @@
     const items = broken
       .map(
         ({ b, i }) =>
-          `<li><code>${esc(b.shortcut)}</code> (slot ${i + 1}) — ${esc(b.error)}.</li>`
+          `<li><code>${esc(b.shortcut)}</code> (slot ${i + 1}) — ${esc(b.error)}, ` +
+          (b.scope === "everywhere"
+            ? `so this slot won't fire anywhere.`
+            : `so it only searches highlighted text on a page.`) +
+          `</li>`
       )
       .join("");
     el.innerHTML =
       `<b>These shortcuts can't search the box above.</b>` +
       `<ul>${items}</ul>` +
-      `They still search highlighted text on a page. ` +
       `<a href="#" class="link" data-shortcuts>Rebind them →</a>`;
   }
 
