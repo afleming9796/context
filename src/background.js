@@ -73,7 +73,7 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
   if (!dest) return;
 
   const md = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
-  openOrReuseTab(S.buildDestinationUrl(dest, selectedText), md);
+  await openOrReuseTab(S.buildDestinationUrl(dest, selectedText), md);
 });
 
 // ---- Quick-search commands ----
@@ -103,32 +103,62 @@ async function quickSearch(tabId, index) {
   const term = res && res.result;
   if (!term) return;
   const md = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
-  openOrReuseTab(S.buildDestinationUrl(dest, term), md);
+  await openOrReuseTab(S.buildDestinationUrl(dest, term), md);
 }
 
 // ---- Tab reuse ----
 
-function openOrReuseTab(url, matchDomain) {
-  chrome.tabs.query({}, (tabs) => {
-    const existing = matchDomain
-      ? tabs.find((t) => t.url && t.url.includes(matchDomain))
-      : null;
-    if (existing) {
-      chrome.tabs.update(existing.id, { url, active: true }, () => {
-        chrome.windows.update(existing.windowId, { focused: true });
-      });
-    } else {
-      chrome.tabs.create({ url });
+// Compare hosts, not raw URL substrings: "google.com" is a substring of
+// "mail.google.com", so substring matching would send a Google search to the
+// user's Gmail tab. www is ignored so example.com and www.example.com pair up.
+function sameHost(a, b) {
+  if (!a || !b) return false;
+  const strip = (h) => h.replace(/^www\./, "");
+  return strip(a) === strip(b);
+}
+
+function hostOf(url) {
+  try {
+    return new URL(url).hostname;
+  } catch (_) {
+    return "";
+  }
+}
+
+// Awaitable so callers can keep the service worker alive until the tab has
+// actually been opened or navigated. Any failure in the reuse path falls
+// through to opening a new tab — a search should never silently go nowhere.
+async function openOrReuseTab(url, matchDomain) {
+  if (matchDomain) {
+    try {
+      const tabs = await chrome.tabs.query({});
+      const existing = tabs.find((t) => sameHost(hostOf(t.url), matchDomain));
+      if (existing) {
+        await chrome.tabs.update(existing.id, { url, active: true });
+        try {
+          await chrome.windows.update(existing.windowId, { focused: true });
+        } catch (_) {
+          // Focusing is a nicety; the tab already navigated.
+        }
+        return;
+      }
+    } catch (e) {
+      console.warn("Context: could not reuse a tab, opening a new one", e);
     }
-  });
+  }
+  await chrome.tabs.create({ url });
 }
 
 // ---- Messages ----
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "OPEN_OR_REUSE_TAB") {
-    openOrReuseTab(msg.url, msg.matchDomain);
-    sendResponse({ success: true });
+    // Respond only once the tab has actually opened. Answering immediately
+    // marks the event handled, letting Chrome tear down the worker (and the
+    // popup that sent this has already closed) before the navigation runs.
+    openOrReuseTab(msg.url, msg.matchDomain)
+      .then(() => sendResponse({ success: true }))
+      .catch((e) => sendResponse({ success: false, error: String(e) }));
     return true;
   }
   if (msg.type === "OPEN_OPTIONS") {

@@ -67,7 +67,7 @@
 
   // ---- Search ----
 
-  function search(dest) {
+  async function search(dest) {
     const raw = termEl.value.trim();
     if (!raw) {
       termEl.classList.add("shake");
@@ -77,11 +77,17 @@
     }
     const term = domainCb.checked ? S.domainOf(raw) : raw;
     const matchDomain = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
-    chrome.runtime.sendMessage({
-      type: "OPEN_OR_REUSE_TAB",
-      url: S.buildDestinationUrl(dest, term),
-      matchDomain,
-    });
+    // Wait for the worker to confirm the tab opened before closing. Closing
+    // the popup first destroys the sender mid-flight and the search is lost.
+    try {
+      await chrome.runtime.sendMessage({
+        type: "OPEN_OR_REUSE_TAB",
+        url: S.buildDestinationUrl(dest, term),
+        matchDomain,
+      });
+    } catch (e) {
+      console.warn("Context: search request failed", e);
+    }
     window.close();
   }
 
