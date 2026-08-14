@@ -7,7 +7,7 @@ Context is keyboard-first and permission-light. Nothing runs on any page until y
 ## Features
 
 - **A panel in your toolbar**: click the Context icon (or press the shortcut) to open a search box with your highlighted text already filled in, then pick where to send it.
-- **Configurable destinations**: URL templates with a `{term}` placeholder, each with its own label and icon. Add and edit them right in the panel.
+- **Configurable destinations**: URL templates with a `{term}` placeholder, each with its own label. Add and edit them right in the panel.
 - **Quick-search shortcuts**: highlight text and press a slot shortcut to search one of your first five destinations without opening anything.
 - **Right-click context menu**: highlight text on any page → search it in any configured destination.
 - **Tab reuse**: Context reopens the destination in an existing tab on that site instead of piling up duplicates. Toggle it off per destination.
@@ -53,7 +53,7 @@ Quick-search slots map to your first five destinations, in panel order.
 
 ### Destination options
 
-- **Label** + **Icon** — how the destination looks in the panel. Icon is just a character — paste any emoji (`Cmd+Ctrl+Space` on Mac, `Win+.` on Windows) or symbol from [emojipedia.org](https://emojipedia.org).
+- **Label** — the destination's name in the panel.
 - **URL template** — a URL with `{term}` as the search placeholder.
 - **Encoding** — how `{term}` is encoded into the URL:
   - **Plain** (URL-encode) — works for most search URLs

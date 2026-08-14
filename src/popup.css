@@ -191,7 +191,6 @@ textarea { resize: vertical; }
   cursor: pointer;
 }
 .dest-item:hover { background: #fafafa; }
-.dest-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
 .dest-main { flex: 1; min-width: 0; }
 .dest-label { font-size: 12.5px; font-weight: 600; }
 .dest-url {
@@ -229,11 +228,6 @@ textarea { resize: vertical; }
 }
 .btn-save:hover:not(:disabled) { background: #1d4ed8; }
 .btn-save:disabled { background: #e4e4e7; color: #a1a1aa; cursor: not-allowed; }
-
-.form-row { display: flex; gap: 8px; }
-.form-col { flex: 1; min-width: 0; }
-.form-col-icon { flex: 0 0 58px; }
-.form-col-icon input { text-align: center; }
 
 .form-label {
   display: block;

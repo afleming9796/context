@@ -17,7 +17,6 @@
       {
         id: "google",
         label: "Google",
-        icon: "🔍",
         urlTemplate: "https://www.google.com/search?q={term}",
         encoding: "plain",
         openMode: "reuse",
@@ -25,7 +24,6 @@
       {
         id: "gmail",
         label: "Gmail",
-        icon: "✉",
         urlTemplate: "https://mail.google.com/mail/u/0/#search/{term}",
         encoding: "plain",
         openMode: "reuse",
