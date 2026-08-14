@@ -106,11 +106,6 @@
     return tpl + encoded;
   }
 
-  function domainOf(term) {
-    const at = term.indexOf("@");
-    return at >= 0 ? term.slice(at + 1) : term;
-  }
-
   function uid(prefix) {
     return prefix + "-" + Math.random().toString(36).slice(2, 9);
   }
@@ -123,7 +118,6 @@
     seedDefaultsIfEmpty,
     matchDomainFor,
     buildDestinationUrl,
-    domainOf,
     uid,
   };
 })();

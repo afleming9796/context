@@ -11,7 +11,6 @@ Context is keyboard-first and permission-light. Nothing runs on any page until y
 - **Quick-search shortcuts**: highlight text and press a slot shortcut to search one of your first five destinations without opening anything.
 - **Right-click context menu**: highlight text on any page → search it in any configured destination.
 - **Tab reuse**: Context reopens the destination in an existing tab on that site instead of piling up duplicates. Toggle it off per destination.
-- **Domain-only toggle**: strip `user@acme.com` to `acme.com` before searching.
 
 Context deliberately keeps no history of what you search — it just opens URLs.
 

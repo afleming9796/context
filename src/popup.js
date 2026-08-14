@@ -26,7 +26,6 @@
   let slotKeys = [];
 
   const termEl = $("#term");
-  const domainCb = $("#domain-cb");
   const destButtonsEl = $("#dest-buttons");
   const searchEmptyEl = $("#search-empty");
   const destListEl = $("#dest-list");
@@ -68,14 +67,13 @@
   // ---- Search ----
 
   async function search(dest) {
-    const raw = termEl.value.trim();
-    if (!raw) {
+    const term = termEl.value.trim();
+    if (!term) {
       termEl.classList.add("shake");
       setTimeout(() => termEl.classList.remove("shake"), 400);
       termEl.focus();
       return;
     }
-    const term = domainCb.checked ? S.domainOf(raw) : raw;
     const matchDomain = dest.openMode === "new" ? "" : S.matchDomainFor(dest.urlTemplate);
     // Wait for the worker to confirm the tab opened before closing. Closing
     // the popup first destroys the sender mid-flight and the search is lost.
@@ -96,7 +94,6 @@
     const has = state.destinations.length > 0;
     searchEmptyEl.hidden = has;
     destButtonsEl.hidden = !has;
-    $("#domain-wrap").hidden = !has;
     termEl.disabled = !has;
 
     state.destinations.forEach((dest, i) => {
