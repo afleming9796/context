@@ -319,3 +319,119 @@ button.primary:hover { background: #1d4ed8; }
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 .privacy .hint { margin-bottom: 0; }
+
+/* ---- Destinations list ---- */
+
+.dest-list { display: flex; flex-direction: column; gap: 1px; margin-top: 8px; }
+.dest-empty { color: #999; font-size: 13px; padding: 4px 2px; }
+
+.dest-row {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px solid #f0f0f2;
+}
+.dest-row:last-child { border-bottom: none; }
+
+.dest-row-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #222;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dest-row-url {
+  font-size: 11.5px;
+  color: #888;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dest-row-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ---- Destination form ---- */
+
+.opt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 14px;
+}
+.opt-field.switch {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.opt-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+}
+textarea,
+.url-field {
+  padding: 7px 10px;
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  min-width: 0;
+  background: #fff;
+  box-sizing: border-box;
+  width: 100%;
+  resize: vertical;
+}
+textarea:focus,
+.url-field:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.form-helper {
+  font-size: 11.5px;
+  color: #888;
+  line-height: 1.5;
+}
+.form-helper code {
+  background: #f1f1f3;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.form-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.form-btns .danger-btn { margin-left: auto; }
+
+button.secondary {
+  background: transparent;
+  color: #555;
+  border: 1px solid #d4d4d8;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font: inherit;
+  cursor: pointer;
+}
+button.secondary:hover { background: #f4f4f5; border-color: #b0b0b8; }
+
+button.danger-btn {
+  background: transparent;
+  color: #c00;
+  border: 1px solid #f5c6c6;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font: inherit;
+  cursor: pointer;
+}
+button.danger-btn:hover { background: #fff0f0; border-color: #f09090; }

@@ -11,17 +11,10 @@
         <img src="../icons/icon-32.png" alt="" />
         <h1>Context</h1>
       </div>
-      <div class="tabs">
-        <button class="tab active" data-tab="search">Search</button>
-        <button class="tab" data-tab="destinations">Destinations</button>
-        <button class="tab tab-icon" id="open-options" title="Settings" aria-label="Settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        </button>
-      </div>
+      <button class="settings-btn" id="open-settings">Settings</button>
     </div>
 
-    <!-- Search view -->
-    <div class="tab-content active" id="tab-search">
+    <div class="content">
       <div class="search-top">
         <input
           type="text"
@@ -36,8 +29,8 @@
 
       <div class="empty-cta" id="search-empty" hidden>
         <p class="empty-title">No destinations yet</p>
-        <p class="empty-desc">A destination is any site you want to search — Gmail, Jira, Google, your CRM.</p>
-        <button class="btn btn-primary" id="empty-add">Add your first destination</button>
+        <p class="empty-desc">Add a destination in Settings — any site you search often.</p>
+        <button class="open-settings-btn" id="empty-add">Open Settings →</button>
       </div>
 
       <div class="tip" id="tip" hidden>
@@ -51,64 +44,6 @@
         <a href="#" id="tip-more">Full guide &amp; shortcuts →</a>
       </div>
     </div>
-
-    <!-- Destinations view -->
-    <div class="tab-content" id="tab-destinations">
-      <div class="toolbar">
-        <input type="text" id="dest-search" placeholder="Search destinations..." />
-        <button class="btn-circle" id="add-dest" title="Add destination" aria-label="Add destination">+</button>
-      </div>
-      <div class="list-scroll">
-        <ul class="dest-list" id="dest-list"></ul>
-      </div>
-    </div>
-
-    <!-- Destination add/edit form -->
-    <div class="tab-content" id="tab-form">
-      <div class="form-header">
-        <h2 class="form-title" id="form-title">New destination</h2>
-        <div class="form-actions">
-          <button class="btn-cancel" id="form-cancel">Cancel</button>
-          <button class="btn-save" id="form-save" title="Save" aria-label="Save" disabled>✓</button>
-        </div>
-      </div>
-
-      <label class="form-label" for="f-label">Label</label>
-      <input type="text" id="f-label" class="field" placeholder="e.g. Gmail" />
-
-      <label class="form-label" for="f-template">URL template</label>
-      <textarea id="f-template" class="field url-field" rows="2" spellcheck="false"
-        placeholder="https://example.com/search?q={term}"></textarea>
-      <p class="form-helper">
-        Use <code>{term}</code> where the highlighted text should go. Tip: run a
-        search on the site, then copy its URL and replace the search words with
-        <code>{term}</code>.
-      </p>
-
-      <label class="form-label" for="f-encoding">Encoding</label>
-      <select id="f-encoding" class="field">
-        <option value="plain">Plain (URL-encode) — works for most sites</option>
-        <option value="salesforce">Salesforce componentDef (base64)</option>
-        <option value="raw">Raw (no encoding)</option>
-      </select>
-
-      <p class="slot-hint" id="slot-hint"></p>
-
-      <div class="setting-row">
-        <div>
-          <div class="setting-label">Always open a new tab</div>
-          <div class="setting-desc">Off: reuse an existing tab on that site</div>
-        </div>
-        <label class="toggle-switch">
-          <input type="checkbox" id="f-newtab" />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-
-      <button class="btn btn-danger" id="form-delete" hidden>Delete destination</button>
-    </div>
-
-    <div class="status" id="status"></div>
 
     <script src="storage.js"></script>
     <script src="popup.js"></script>

@@ -12,57 +12,13 @@
   const $ = (sel) => document.querySelector(sel);
 
   const TIPS_KEY = "tipsDismissed";
-  // Quick-search slots, matching the quick-search-N commands in the manifest.
-  // Chrome allows at most 4 suggested keys across all commands, so only slots
-  // 1-3 ship bound (the fourth default goes to opening the panel); 4 and 5 are
-  // there for the user to bind at chrome://extensions/shortcuts.
   const SLOT_COUNT = 5;
 
   let state = { destinations: [] };
-  let editingId = null; // null = adding, otherwise the destination being edited
-  // Real quick-search bindings, indexed by slot. Slots 3 and 4 ship unbound,
-  // and any of them can be cleared by the user, so we never advertise a key
-  // we haven't confirmed with Chrome.
-  let slotKeys = [];
 
   const termEl = $("#term");
   const destButtonsEl = $("#dest-buttons");
   const searchEmptyEl = $("#search-empty");
-  const destListEl = $("#dest-list");
-  const destSearchEl = $("#dest-search");
-  const statusEl = $("#status");
-
-  function flash(msg) {
-    statusEl.textContent = msg;
-    statusEl.classList.add("visible");
-    setTimeout(() => statusEl.classList.remove("visible"), 1400);
-  }
-
-  // ---- View switching ----
-
-  function showView(name) {
-    for (const el of document.querySelectorAll(".tab-content")) {
-      el.classList.toggle("active", el.id === `tab-${name}`);
-    }
-    // The form is a sub-view of Destinations; keep that tab lit while it's open.
-    const lit = name === "form" ? "destinations" : name;
-    for (const t of document.querySelectorAll(".tab[data-tab]")) {
-      t.classList.toggle("active", t.dataset.tab === lit);
-    }
-  }
-
-  for (const t of document.querySelectorAll(".tab[data-tab]")) {
-    t.addEventListener("click", () => {
-      showView(t.dataset.tab);
-      if (t.dataset.tab === "search") termEl.focus();
-      if (t.dataset.tab === "destinations") destSearchEl.focus();
-    });
-  }
-
-  $("#open-options").addEventListener("click", () => {
-    chrome.runtime.openOptionsPage();
-    window.close();
-  });
 
   // ---- Search ----
 
@@ -97,7 +53,7 @@
     $("#shortcuts-tip").hidden = !has;
     termEl.disabled = !has;
 
-    state.destinations.forEach((dest, i) => {
+    state.destinations.forEach((dest) => {
       const btn = document.createElement("button");
       btn.className = "dest-btn";
       btn.title = dest.urlTemplate || "";
@@ -113,7 +69,13 @@
     if (e.key === "Enter" && state.destinations.length) search(state.destinations[0]);
   });
 
-  $("#empty-add").addEventListener("click", () => openForm(null));
+  function openSettings() {
+    chrome.runtime.openOptionsPage();
+    window.close();
+  }
+
+  $("#open-settings").addEventListener("click", openSettings);
+  $("#empty-add").addEventListener("click", openSettings);
 
   // Pull the highlighted text off the active tab. Fails harmlessly on pages we
   // can't script (chrome://, the Web Store, PDFs) — the box just starts empty.
@@ -131,147 +93,6 @@
     }
   }
 
-  // ---- Destinations list ----
-
-  function renderList() {
-    const q = destSearchEl.value.trim().toLowerCase();
-    destListEl.innerHTML = "";
-
-    const matches = state.destinations
-      .map((d, i) => ({ d, i }))
-      .filter(({ d }) =>
-        !q ||
-        (d.label || "").toLowerCase().includes(q) ||
-        (d.urlTemplate || "").toLowerCase().includes(q)
-      );
-
-    if (!matches.length) {
-      const empty = document.createElement("div");
-      empty.className = "list-empty";
-      empty.textContent = state.destinations.length
-        ? "No destinations match that search."
-        : "No destinations yet. Press + to add one.";
-      destListEl.appendChild(empty);
-      return;
-    }
-
-    for (const { d, i } of matches) {
-      const li = document.createElement("li");
-      li.className = "dest-item";
-      li.innerHTML = `
-        <span class="dest-main">
-          <span class="dest-label"></span>
-          <div class="dest-url"></div>
-        </span>
-      `;
-      li.querySelector(".dest-label").textContent = d.label || "(unnamed)";
-      li.querySelector(".dest-url").textContent = d.urlTemplate || "";
-      if (slotKeys[i]) {
-        const slot = document.createElement("span");
-        slot.className = "dest-slot";
-        slot.textContent = slotKeys[i];
-        li.appendChild(slot);
-      }
-      li.addEventListener("click", () => openForm(d.id));
-      destListEl.appendChild(li);
-    }
-  }
-
-  destSearchEl.addEventListener("input", renderList);
-  $("#add-dest").addEventListener("click", () => openForm(null));
-
-  // ---- Destination form ----
-
-  const fLabel = $("#f-label");
-  const fTemplate = $("#f-template");
-  const fEncoding = $("#f-encoding");
-  const fNewtab = $("#f-newtab");
-  const saveBtn = $("#form-save");
-  const deleteBtn = $("#form-delete");
-
-  function validate() {
-    const ok = fLabel.value.trim() && fTemplate.value.trim();
-    saveBtn.disabled = !ok;
-  }
-  for (const el of [fLabel, fTemplate]) el.addEventListener("input", validate);
-
-  // Which quick-search slot this destination occupies, and how to rebind it.
-  // A new destination lands at the end, so its slot is the current length.
-  function renderSlotHint(idx) {
-    const el = $("#slot-hint");
-    const n = idx + 1;
-    const link = `<a href="#" class="link" data-shortcuts>Chrome shortcut settings</a>`;
-    if (idx >= SLOT_COUNT) {
-      el.innerHTML =
-        `Destination ${n}. Only the first ${SLOT_COUNT} get a quick-search ` +
-        `shortcut, so this one is reachable from the panel and the ` +
-        `right-click menu.`;
-      return;
-    }
-    const key = slotKeys[idx];
-    el.innerHTML = key
-      ? `Destination ${n}. Change keyboard shortcut from <code>${key}</code> in ${link}.`
-      : `Destination ${n} has no keyboard shortcut yet. Assign one in ${link}.`;
-  }
-
-  // The link is rewritten on every open, so delegate rather than re-binding.
-  // A plain href can't reach a chrome:// page — it has to go through tabs.
-  $("#slot-hint").addEventListener("click", (e) => {
-    if (!e.target.closest("[data-shortcuts]")) return;
-    e.preventDefault();
-    chrome.tabs.create({ url: "chrome://extensions/shortcuts" });
-    window.close();
-  });
-
-  function openForm(id) {
-    editingId = id;
-    const dest = id ? state.destinations.find((d) => d.id === id) : null;
-    const idx = id
-      ? state.destinations.findIndex((d) => d.id === id)
-      : state.destinations.length;
-    $("#form-title").textContent = dest
-      ? `Edit destination ${idx + 1}`
-      : "New destination";
-    renderSlotHint(idx);
-    fLabel.value = dest ? dest.label || "" : "";
-    fTemplate.value = dest ? dest.urlTemplate || "" : "";
-    fEncoding.value = dest ? dest.encoding || "plain" : "plain";
-    fNewtab.checked = dest ? dest.openMode === "new" : false;
-    deleteBtn.hidden = !dest;
-    validate();
-    showView("form");
-    fLabel.focus();
-  }
-
-  $("#form-cancel").addEventListener("click", () => showView("destinations"));
-
-  saveBtn.addEventListener("click", async () => {
-    const patch = {
-      label: fLabel.value.trim(),
-      urlTemplate: fTemplate.value.trim(),
-      encoding: fEncoding.value,
-      openMode: fNewtab.checked ? "new" : "reuse",
-    };
-    if (editingId) {
-      const dest = state.destinations.find((d) => d.id === editingId);
-      Object.assign(dest, patch);
-    } else {
-      state.destinations.push({ id: S.uid("dest"), ...patch });
-    }
-    await S.saveSettings(state);
-    flash("Saved");
-    renderAll();
-    showView("destinations");
-  });
-
-  deleteBtn.addEventListener("click", async () => {
-    state.destinations = state.destinations.filter((d) => d.id !== editingId);
-    await S.saveSettings(state);
-    flash("Deleted");
-    renderAll();
-    showView("destinations");
-  });
-
   // ---- Tip card ----
 
   // Read the live bindings once. The user may have rebound or cleared any of
@@ -283,7 +104,7 @@
     } catch (_) {
       return;
     }
-    slotKeys = Array.from({ length: SLOT_COUNT }, (_, i) => {
+    const slotKeys = Array.from({ length: SLOT_COUNT }, (_, i) => {
       const c = cmds.find((x) => x.name === `quick-search-${i + 1}`);
       return c && c.shortcut ? c.shortcut : "";
     });
@@ -316,35 +137,26 @@
 
   $("#tip-more").addEventListener("click", (e) => {
     e.preventDefault();
-    chrome.runtime.openOptionsPage();
-    window.close();
+    openSettings();
   });
 
   $("#shortcuts-tip-link").addEventListener("click", (e) => {
     e.preventDefault();
-    chrome.runtime.openOptionsPage();
-    window.close();
+    openSettings();
   });
 
   // ---- Init ----
-
-  function renderAll() {
-    renderSearch();
-    renderList();
-  }
 
   (async () => {
     state = await S.seedDefaultsIfEmpty();
     if (!state.destinations) state.destinations = [];
     await loadShortcuts();
-    renderAll();
+    renderSearch();
     await renderTip();
     if (state.destinations.length) {
       termEl.focus();
       await prefillFromSelection();
       termEl.select();
-    } else {
-      showView("search");
     }
   })();
 })();
