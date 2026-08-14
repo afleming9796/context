@@ -6,6 +6,7 @@
   "use strict";
 
   const S = globalThis.CtxStorage;
+  const K = globalThis.CtxShortcuts;
 
   let state = { destinations: [] };
   const shortcutsEl = document.getElementById("shortcuts");
@@ -46,6 +47,14 @@
       const key = row.querySelector(".shortcut-key");
       if (c.shortcut) {
         key.textContent = c.shortcut;
+        // Quick-search slots double as in-panel shortcuts. Some keys never
+        // reach the panel, so say which ones are page-only rather than letting
+        // the user find out by pressing them in the search box.
+        const binding = K.describeBinding(c.shortcut);
+        if (c.name !== "_execute_action" && binding.error) {
+          labelEl.querySelector(".shortcut-note").textContent =
+            ` (on a page only — ${binding.error})`;
+        }
       } else {
         key.textContent = "not set";
         key.classList.add("unset");

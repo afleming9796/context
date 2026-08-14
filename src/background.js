@@ -7,9 +7,10 @@
 // The main UI is the toolbar popup (src/popup.html); nothing is injected into
 // pages except the one-line selection read below, and only when invoked.
 
-importScripts("storage.js");
+importScripts("storage.js", "shortcuts.js");
 
 const S = globalThis.CtxStorage;
+const K = globalThis.CtxShortcuts;
 
 // ---- Context menus ----
 // Serialize rebuilds so simultaneous callers (onInstalled + cold-start +
@@ -84,15 +85,32 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
   if (!tab || tab.id == null) return;
   const slot = command.match(/^quick-search-([1-5])$/);
   if (!slot) return;
-  // The panel handles these itself while it's open, searching whatever the
-  // user typed. Bail out so we don't also fire one for the page selection.
-  if (await popupIsOpen()) return;
+  const index = Number(slot[1]) - 1;
+  // While the panel is open it fires these itself against whatever the user
+  // typed, so bail out rather than running a second, different search on the
+  // page selection. Only for the slots it says it can intercept, though: a
+  // slot bound to a key the panel never sees still has to work from here.
+  if (await panelHandles(index)) return;
   try {
-    await quickSearch(tab.id, Number(slot[1]) - 1);
+    await quickSearch(tab.id, index);
   } catch (_) {
     // Restricted page (chrome://, Web Store, PDF viewer): nothing to read.
   }
 });
+
+async function panelHandles(index) {
+  if (!(await popupIsOpen())) return false;
+  try {
+    const stored = await chrome.storage.session.get(K.PANEL_SLOTS_KEY);
+    const claimed = stored[K.PANEL_SLOTS_KEY];
+    // Nothing reported yet (the panel is still starting up, or it couldn't
+    // read its bindings): assume it has them all, as it did before.
+    if (!Array.isArray(claimed)) return true;
+    return claimed.includes(index);
+  } catch (_) {
+    return true;
+  }
+}
 
 async function popupIsOpen() {
   try {

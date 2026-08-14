@@ -109,6 +109,38 @@ textarea { resize: vertical; }
 .dest-btn:active { transform: translateY(1px); }
 .dest-btn .slot { font-size: 10px; color: #a1a1aa; }
 .dest-btn:hover .slot { color: #60a5fa; }
+/* Bound to a key the panel can't intercept — works on a page, not in here. */
+.dest-btn .slot-broken { text-decoration: underline dotted #d97706; }
+
+/* ---- Unusable quick-search binding ---- */
+
+.slot-warning {
+  margin-top: 10px;
+  padding: 9px 11px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #78350f;
+}
+.slot-warning ul { margin: 4px 0 5px; padding-left: 16px; }
+.slot-warning code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 4px;
+  padding: 0 4px;
+}
+.slot-warning .link { color: #b45309; text-decoration: none; font-weight: 600; }
+.slot-warning .link:hover { text-decoration: underline; }
+
+@media (prefers-color-scheme: dark) {
+  .slot-warning { background: #78350f22; border-color: #92400e; color: #fcd34d; }
+  .slot-warning code { background: #78350f44; border-color: #92400e; color: #fde68a; }
+  .slot-warning .link { color: #fbbf24; }
+}
 
 .shake { animation: shake 0.35s; border-color: #dc2626 !important; }
 @keyframes shake {

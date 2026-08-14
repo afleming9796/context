@@ -42,6 +42,8 @@ To pick up new changes after a `git pull`, go to `chrome://extensions` and click
 
 The quick-search shortcuts also work *inside* the panel: type or edit a term in the box and press `⌥1`/`⌥2`/`⌥3` to send it straight to that destination — no tabbing or clicking. `Enter` sends it to your first destination.
 
+Rebind a slot and the panel follows — it reads the live bindings rather than assuming the defaults. Two kinds of key can't be caught inside the panel, though: media keys, which Chrome never delivers to an extension window, and a binding with no modifier, which would fire while you type. Those still search highlighted text on a page, and the panel says so instead of leaving you with a key that appears to do nothing.
+
 ### Keyboard shortcuts
 
 Chrome owns these bindings — that's why Context needs no access to the sites you visit. View them on the settings page; change them at `chrome://extensions/shortcuts`. Defaults:
@@ -71,3 +73,4 @@ Quick-search slots map to your first five destinations, in panel order. They fir
 - `src/options.*` — settings page: getting started and shortcut bindings.
 - `src/background.js` — context menus, quick-search commands, tab reuse.
 - `src/storage.js` — shared settings/URL helpers.
+- `src/shortcuts.js` — reads Chrome's quick-search bindings back into something a keypress can be matched against.

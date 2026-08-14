@@ -9,6 +9,7 @@
   "use strict";
 
   const S = globalThis.CtxStorage;
+  const K = globalThis.CtxShortcuts;
   const $ = (sel) => document.querySelector(sel);
 
   const TIPS_KEY = "tipsDismissed";
@@ -17,53 +18,14 @@
   // 1-3 ship bound (the fourth default goes to opening the panel); 4 and 5 are
   // there for the user to bind at chrome://extensions/shortcuts.
   const SLOT_COUNT = 5;
+  const SHORTCUTS_URL = "chrome://extensions/shortcuts";
 
   let state = { destinations: [] };
   let editingId = null; // null = adding, otherwise the destination being edited
-  // Real quick-search bindings, indexed by slot. Slots 3 and 4 ship unbound,
-  // and any of them can be cleared by the user, so we never advertise a key
-  // we haven't confirmed with Chrome.
-  let slotKeys = [];
-  // Same bindings, parsed once, so the panel can honour them while it has
-  // focus — typing a term and pressing the slot key searches what you typed.
-  let slotCombos = [];
-
-  // Chrome reports bindings as macOS symbols ("⌥1") or plus-form ("Alt+1").
-  function parseShortcut(str) {
-    if (!str) return null;
-    const m = { meta: false, ctrl: false, alt: false, shift: false };
-    let key = "";
-    if (/[⌘⌥⌃⇧]/.test(str)) {
-      for (const ch of str) {
-        if (ch === "⌘") m.meta = true;
-        else if (ch === "⌥") m.alt = true;
-        else if (ch === "⌃") m.ctrl = true;
-        else if (ch === "⇧") m.shift = true;
-        else key += ch;
-      }
-    } else {
-      const parts = str.split("+");
-      key = parts.pop() || "";
-      for (const p of parts) {
-        const l = p.trim().toLowerCase();
-        if (l === "command" || l === "meta") m.meta = true;
-        else if (l === "ctrl" || l === "control" || l === "macctrl") m.ctrl = true;
-        else if (l === "alt" || l === "option") m.alt = true;
-        else if (l === "shift") m.shift = true;
-      }
-    }
-    return { ...m, key: key.trim().toLowerCase() };
-  }
-
-  // Compare alphanumerics by e.code: Option+1 on macOS reports e.key "¡".
-  function eventMatches(e, sc) {
-    if (!sc) return false;
-    if (!!e.metaKey !== sc.meta || !!e.ctrlKey !== sc.ctrl ||
-        !!e.altKey !== sc.alt || !!e.shiftKey !== sc.shift) return false;
-    if (/^[0-9]$/.test(sc.key)) return e.code === `Digit${sc.key}`;
-    if (/^[a-z]$/.test(sc.key)) return e.code === `Key${sc.key.toUpperCase()}`;
-    return String(e.key).toLowerCase() === sc.key;
-  }
+  // What Chrome says each slot is bound to, indexed by slot: either a combo the
+  // panel can match on keydown, or the reason it can't. Slots 4 and 5 ship
+  // unbound and any slot can be rebound or cleared, so nothing here is assumed.
+  let slotBindings = [];
 
   const termEl = $("#term");
   const domainCb = $("#domain-cb");
@@ -148,10 +110,17 @@
       const label = document.createElement("span");
       label.textContent = dest.label || "(unnamed)";
       btn.append(icon, label);
-      if (slotKeys[i]) {
+      const binding = slotBindings[i];
+      if (binding && binding.shortcut) {
         const slot = document.createElement("span");
         slot.className = "slot";
-        slot.textContent = slotKeys[i];
+        slot.textContent = binding.shortcut;
+        // A binding the panel can't intercept still works on a page, so the
+        // badge stays — the tooltip is where the caveat goes.
+        if (binding.error) {
+          slot.classList.add("slot-broken");
+          slot.title = `Works on a page, but not from this box — ${binding.error}.`;
+        }
         btn.appendChild(slot);
       }
       btn.addEventListener("click", () => search(dest));
@@ -165,21 +134,38 @@
 
   // Slot shortcuts work inside the panel too, so you can type a term and fire
   // it at a destination without reaching for the mouse. Bound on the document
-  // so it works wherever focus sits in the Search view. Chrome suppresses its
-  // own command dispatch while the popup has focus; the background also
-  // ignores quick-search commands while a popup is open, so this can't
-  // double-fire and search the page selection as well.
+  // so it works wherever focus sits, and handled from every view — while the
+  // panel is up the background worker stands aside for the slots we claim, so
+  // anything we ignore here would be a key that does nothing at all.
+  //
+  // Consuming the event is also what keeps this from double-firing: Chrome
+  // only dispatches the command to the background once the panel has passed
+  // the key back unhandled, and the worker's own popup check backstops that.
   document.addEventListener("keydown", (e) => {
-    if (!document.getElementById("tab-search").classList.contains("active")) return;
-    for (let i = 0; i < slotCombos.length; i++) {
-      if (!eventMatches(e, slotCombos[i])) continue;
-      const dest = state.destinations[i];
-      if (!dest) return;
+    for (let i = 0; i < slotBindings.length; i++) {
+      const binding = slotBindings[i];
+      if (!binding || !binding.combo || !K.matches(e, binding.combo)) continue;
       e.preventDefault();
-      search(dest);
+      fireSlot(i);
       return;
     }
   });
+
+  function fireSlot(i) {
+    // Searching from the form would close the panel over unsaved edits.
+    if ($("#tab-form").classList.contains("active")) {
+      flash("Finish or cancel this destination first");
+      return;
+    }
+    const dest = state.destinations[i];
+    if (!dest) {
+      flash(`Nothing in quick-search slot ${i + 1} yet`);
+      return;
+    }
+    // Fired from the Destinations tab, show what's about to be searched.
+    showView("search");
+    search(dest);
+  }
 
   $("#empty-add").addEventListener("click", () => openForm(null));
 
@@ -236,10 +222,10 @@
       li.querySelector(".dest-icon").textContent = d.icon || "→";
       li.querySelector(".dest-label").textContent = d.label || "(unnamed)";
       li.querySelector(".dest-url").textContent = d.urlTemplate || "";
-      if (slotKeys[i]) {
+      if (slotBindings[i] && slotBindings[i].shortcut) {
         const slot = document.createElement("span");
         slot.className = "dest-slot";
-        slot.textContent = slotKeys[i];
+        slot.textContent = slotBindings[i].shortcut;
         li.appendChild(slot);
       }
       li.addEventListener("click", () => openForm(d.id));
@@ -279,18 +265,35 @@
         `right-click menu.`;
       return;
     }
-    const key = slotKeys[idx];
-    el.innerHTML = key
-      ? `Destination ${n}. Change keyboard shortcut from <code>${key}</code> in ${link}.`
-      : `Destination ${n} has no keyboard shortcut yet. Assign one in ${link}.`;
+    const binding = slotBindings[idx];
+    if (!binding || !binding.shortcut) {
+      el.innerHTML =
+        `Destination ${n} has no keyboard shortcut yet. Assign one in ${link}.`;
+      return;
+    }
+    el.innerHTML = binding.error
+      ? `Destination ${n}. <code>${esc(binding.shortcut)}</code> searches the ` +
+        `highlighted text on a page, but can't search this panel's box — ` +
+        `${esc(binding.error)}. Pick another key in ${link}.`
+      : `Destination ${n}. Change keyboard shortcut from ` +
+        `<code>${esc(binding.shortcut)}</code> in ${link}.`;
   }
 
-  // The link is rewritten on every open, so delegate rather than re-binding.
-  // A plain href can't reach a chrome:// page — it has to go through tabs.
-  $("#slot-hint").addEventListener("click", (e) => {
+  // Binding strings and their failure reasons come from Chrome, but they land
+  // in innerHTML next to the settings link, so don't let them carry markup.
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])
+    );
+  }
+
+  // These links are rewritten whenever their card re-renders, so delegate from
+  // the document rather than re-binding. A plain href can't reach a chrome://
+  // page — it has to go through tabs.
+  document.addEventListener("click", (e) => {
     if (!e.target.closest("[data-shortcuts]")) return;
     e.preventDefault();
-    chrome.tabs.create({ url: "chrome://extensions/shortcuts" });
+    chrome.tabs.create({ url: SHORTCUTS_URL });
     window.close();
   });
 
@@ -353,27 +356,86 @@
     let cmds = [];
     try {
       cmds = await chrome.commands.getAll();
-    } catch (_) {
+    } catch (e) {
+      console.warn("Context: could not read the shortcut bindings", e);
       return;
     }
-    slotKeys = Array.from({ length: SLOT_COUNT }, (_, i) => {
+    slotBindings = Array.from({ length: SLOT_COUNT }, (_, i) => {
       const c = cmds.find((x) => x.name === `quick-search-${i + 1}`);
-      return c && c.shortcut ? c.shortcut : "";
+      return K.describeBinding(c && c.shortcut ? c.shortcut : "");
     });
-    slotCombos = slotKeys.map(parseShortcut);
+
+    for (let i = 0; i < slotBindings.length; i++) {
+      if (!slotBindings[i].error) continue;
+      console.error(
+        `Context: quick-search slot ${i + 1} is bound to "${slotBindings[i].shortcut}", ` +
+          `which the panel can't act on — ${slotBindings[i].error}. ` +
+          `It still searches the highlighted text on a page. Rebind it at ${SHORTCUTS_URL}.`
+      );
+    }
+    await claimSlots();
 
     const open = cmds.find((c) => c.name === "_execute_action");
     $("#tip-key").textContent = open && open.shortcut ? open.shortcut : "the toolbar icon";
 
-    // Only pitch the quick-search tip if at least one slot is actually bound.
-    const bound = slotKeys.filter(Boolean);
+    // Only pitch the quick-search tip with keys that work from the box.
+    const usable = slotBindings.filter((b) => b.combo).map((b) => b.shortcut);
     const line = $("#tip-slots");
-    if (bound.length) {
-      line.querySelector(".keys").textContent = bound.join(" / ");
+    if (usable.length) {
+      line.querySelector(".keys").textContent = usable.join(" / ");
     } else {
       line.hidden = true;
     }
   }
+
+  // A bound-but-unusable slot is worth saying out loud: the key looks live on
+  // the destination button, and pressing it in here would otherwise do nothing.
+  function renderSlotWarning() {
+    const el = $("#slot-warning");
+    // Only for slots that actually point somewhere — an unusable binding on an
+    // empty slot isn't costing anyone a search.
+    const broken = slotBindings
+      .map((b, i) => ({ b, i }))
+      .filter(({ b, i }) => b.error && state.destinations[i]);
+    el.hidden = !broken.length;
+    if (!broken.length) return;
+    const items = broken
+      .map(
+        ({ b, i }) =>
+          `<li><code>${esc(b.shortcut)}</code> (slot ${i + 1}) — ${esc(b.error)}.</li>`
+      )
+      .join("");
+    el.innerHTML =
+      `<b>These shortcuts can't search the box above.</b>` +
+      `<ul>${items}</ul>` +
+      `They still search highlighted text on a page. ` +
+      `<a href="#" class="link" data-shortcuts>Rebind them →</a>`;
+  }
+
+  // Tell the worker which slots the panel is intercepting. It stays out of the
+  // way for those while we're open — but a slot we can't see (a media key, or
+  // one Chrome describes in a form we don't know) still has to work from the
+  // page, so it must not blanket-ignore every slot.
+  async function claimSlots() {
+    const claimed = slotBindings
+      .map((b, i) => (b.combo ? i : -1))
+      .filter((i) => i >= 0);
+    try {
+      await chrome.storage.session.set({ [K.PANEL_SLOTS_KEY]: claimed });
+    } catch (e) {
+      console.warn("Context: could not report which slots the panel handles", e);
+    }
+  }
+
+  // Belt and braces — the worker also checks whether a popup is open, so a
+  // claim left behind by a closed panel is inert either way.
+  window.addEventListener("pagehide", () => {
+    try {
+      chrome.storage.session.remove(K.PANEL_SLOTS_KEY);
+    } catch (_) {
+      /* nothing to clean up */
+    }
+  });
 
   async function renderTip() {
     const dismissed = await new Promise((r) =>
@@ -399,6 +461,8 @@
   function renderAll() {
     renderSearch();
     renderList();
+    // Adding or deleting a destination shifts which slots are in play.
+    renderSlotWarning();
   }
 
   (async () => {
