@@ -8,15 +8,50 @@
   <body>
     <header>
       <h1>Context</h1>
-      <p class="sub">Highlight text anywhere, search it in the sites you actually use.</p>
     </header>
+
+    <section class="start">
+      <h2>Getting started</h2>
+      <ol class="steps">
+        <li>
+          <b>Add a destination</b> using the section below. A destination is any site you search often — press <b>+ Add</b>, give it a label, and paste a URL template with <code>{term}</code> where the search words go.
+        </li>
+        <li>
+          <b>Highlight text on any page</b> — a name, an email address, a ticket ID.
+        </li>
+        <li>
+          <b>Search it</b>, whichever way suits you:
+          <ul class="ways">
+            <li>Press <code id="k-open">⌘M</code> to open the panel with your highlighted text already filled in, then pick a destination.</li>
+            <li>Right-click → <b>Context</b> → pick a destination.</li>
+            <li>Press <code>⌥1</code>, <code>⌥2</code>, or <code>⌥3</code> to jump straight to one of your top destinations.</li>
+          </ul>
+        </li>
+      </ol>
+      <p class="hint">
+        Context reuses an existing tab on the destination site when it can, so
+        you don't end up with twelve Gmail tabs. Turn that off per destination
+        with <b>Always open a new tab</b>.
+      </p>
+    </section>
 
     <section id="destinations-section">
       <div class="section-head">
-        <h2>Destinations</h2>
+        <h2>Destinations &amp; shortcuts</h2>
         <button id="add-dest" class="primary">+ Add</button>
       </div>
+      <p class="hint">
+        Quick-search shortcuts map to your first five destinations, in the order
+        they appear here. Chrome owns these bindings — that's why Context needs
+        no access to the sites you visit.
+      </p>
+
       <div id="dest-list" class="dest-list"></div>
+
+      <div class="shortcut-footer">
+        <div id="shortcuts" class="shortcut-rows"></div>
+        <button id="open-shortcuts" class="secondary">Change shortcuts in Chrome…</button>
+      </div>
     </section>
 
     <section id="dest-form-section" hidden>
@@ -54,45 +89,6 @@
         <button id="form-cancel" class="secondary">Cancel</button>
         <button id="form-delete" class="danger-btn" hidden>Delete</button>
       </div>
-    </section>
-
-    <section class="start">
-      <h2>Getting started</h2>
-      <ol class="steps">
-        <li>
-          <b>Add a destination</b> using the section above. A destination is any site you search often — press <b>+ Add</b>, give it a label, and paste a URL template with <code>{term}</code> where the search words go.
-        </li>
-        <li>
-          <b>Highlight text on any page</b> — a name, an email address, a ticket ID.
-        </li>
-        <li>
-          <b>Search it</b>, whichever way suits you:
-          <ul class="ways">
-            <li>Press <code id="k-open">⌘M</code> to open the panel with your highlighted text already filled in, then pick a destination.</li>
-            <li>Right-click → <b>Context</b> → pick a destination.</li>
-            <li>Press <code>⌥1</code>, <code>⌥2</code>, or <code>⌥3</code> to jump straight to one of your top destinations.</li>
-          </ul>
-        </li>
-      </ol>
-      <p class="hint">
-        Context reuses an existing tab on the destination site when it can, so
-        you don't end up with twelve Gmail tabs. Turn that off per destination
-        with <b>Always open a new tab</b>.
-      </p>
-    </section>
-
-    <section>
-      <div class="section-head">
-        <h2>Keyboard shortcuts</h2>
-        <button id="open-shortcuts" class="primary">Change in Chrome…</button>
-      </div>
-      <p class="hint">
-        Chrome owns these bindings — that's why Context needs no access to the
-        sites you visit. Quick-search slots map to your first five destinations,
-        in the order they appear in the panel. On macOS, <code>⌘M</code> may be
-        reserved for window-minimize; rebind it if it won't take.
-      </p>
-      <div id="shortcuts" class="shortcut-rows"></div>
     </section>
 
     <div class="status" id="status"></div>

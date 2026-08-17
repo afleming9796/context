@@ -56,10 +56,12 @@
       const right = document.createElement("div");
       right.className = "dest-row-right";
 
-      if (slotKeys[i]) {
+      // The first five destinations own the quick-search slots, so the binding
+      // belongs on the row rather than in a separate list that repeats it.
+      if (i < SLOT_COUNT) {
         const badge = document.createElement("span");
-        badge.className = "slot-badge";
-        badge.textContent = slotKeys[i];
+        badge.className = slotKeys[i] ? "slot-badge" : "slot-badge unset";
+        badge.textContent = slotKeys[i] || "no shortcut";
         right.appendChild(badge);
       }
 
@@ -84,6 +86,11 @@
   fLabel.addEventListener("input", validate);
   fTemplate.addEventListener("input", validate);
 
+  function closeDestForm() {
+    destFormSection.hidden = true;
+    editingId = null;
+  }
+
   function openDestForm(id) {
     editingId = id;
     const dest = id ? state.destinations.find((d) => d.id === id) : null;
@@ -99,10 +106,7 @@
     fLabel.focus();
   }
 
-  document.getElementById("form-cancel").addEventListener("click", () => {
-    destFormSection.hidden = true;
-    editingId = null;
-  });
+  document.getElementById("form-cancel").addEventListener("click", closeDestForm);
 
   saveBtn.addEventListener("click", async () => {
     const patch = {
@@ -119,64 +123,50 @@
     }
     await S.saveSettings(state);
     flash("Saved");
-    destFormSection.hidden = true;
-    editingId = null;
+    closeDestForm();
     renderDestList();
-    renderShortcuts();
   });
 
   deleteBtn.addEventListener("click", async () => {
+    const dest = state.destinations.find((d) => d.id === editingId);
+    if (!dest) return;
+    const name = dest.label || "this destination";
+    if (!confirm(`Delete "${name}"? This can't be undone.`)) return;
     state.destinations = state.destinations.filter((d) => d.id !== editingId);
     await S.saveSettings(state);
     flash("Deleted");
-    destFormSection.hidden = true;
-    editingId = null;
+    closeDestForm();
     renderDestList();
-    renderShortcuts();
   });
 
   // ---- Shortcuts (read-only; chrome.commands has no setter by design) ----
 
-  async function renderShortcuts() {
-    let commands = [];
-    try { commands = await chrome.commands.getAll(); } catch (_) { return; }
+  // Quick-search bindings live on the destination rows as badges; all that's
+  // left here is the one shortcut with no destination of its own.
+  function renderOpenShortcut(cmds) {
     shortcutsEl.innerHTML = "";
+    const open = cmds.find((c) => c.name === "_execute_action");
+    if (!open) return;
 
-    const labelFor = (name) => {
-      if (name === "_execute_action") return "Open the Context panel";
-      const slot = name.match(/^quick-search-([1-5])$/);
-      if (!slot) return null;
-      const dest = state.destinations[Number(slot[1]) - 1];
-      return dest
-        ? `Quick-search: ${dest.label || "(unnamed)"}`
-        : `Quick-search slot ${slot[1]} — no destination yet`;
-    };
+    if (open.shortcut) document.getElementById("k-open").textContent = open.shortcut;
 
-    for (const c of commands) {
-      const label = labelFor(c.name);
-      if (!label) continue;
-      if (c.name === "_execute_action" && c.shortcut) {
-        const k = document.getElementById("k-open");
-        if (k) k.textContent = c.shortcut;
-      }
-      const row = document.createElement("div");
-      row.className = "shortcut-row";
-      row.innerHTML = `<span class="shortcut-label"><span class="shortcut-note"></span></span><span class="shortcut-key"></span>`;
-      const labelEl = row.querySelector(".shortcut-label");
-      labelEl.prepend(label);
-      if (c.name === "_execute_action") {
-        labelEl.querySelector(".shortcut-note").textContent =
-          " (Highlighted text appears as search term)";
-      }
-      const key = row.querySelector(".shortcut-key");
-      if (c.shortcut) {
-        key.textContent = c.shortcut;
-      } else {
-        key.textContent = "not set";
-        key.classList.add("unset");
-      }
-      shortcutsEl.appendChild(row);
-    }
+    const row = document.createElement("div");
+    row.className = "shortcut-row";
+
+    const label = document.createElement("span");
+    label.className = "shortcut-label";
+    label.append("Open the Context panel");
+    const note = document.createElement("span");
+    note.className = "shortcut-note";
+    note.textContent = " (highlighted text appears as the search term)";
+    label.append(note);
+
+    const key = document.createElement("span");
+    key.className = open.shortcut ? "shortcut-key" : "shortcut-key unset";
+    key.textContent = open.shortcut || "not set";
+
+    row.append(label, key);
+    shortcutsEl.appendChild(row);
   }
 
   document.getElementById("open-shortcuts").addEventListener("click", () => {
@@ -189,16 +179,18 @@
     state = await S.seedDefaultsIfEmpty();
     if (!state.destinations) state.destinations = [];
 
-    // Load slot keys for displaying shortcut badges on destinations.
+    let cmds = [];
     try {
-      const cmds = await chrome.commands.getAll();
-      slotKeys = Array.from({ length: SLOT_COUNT }, (_, i) => {
-        const c = cmds.find((x) => x.name === `quick-search-${i + 1}`);
-        return c && c.shortcut ? c.shortcut : "";
-      });
-    } catch (_) {}
+      cmds = await chrome.commands.getAll();
+    } catch (_) {
+      /* commands unavailable — rows just render without keys */
+    }
+    slotKeys = Array.from({ length: SLOT_COUNT }, (_, i) => {
+      const c = cmds.find((x) => x.name === `quick-search-${i + 1}`);
+      return c && c.shortcut ? c.shortcut : "";
+    });
 
     renderDestList();
-    await renderShortcuts();
+    renderOpenShortcut(cmds);
   })();
 })();
