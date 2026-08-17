@@ -8,35 +8,23 @@
   <body>
     <header>
       <h1>Context</h1>
-      <p class="sub">Highlight text anywhere, search it in the sites you actually use.</p>
     </header>
 
     <section class="start">
       <h2>Getting started</h2>
       <ol class="steps">
         <li>
-          <b>Add a destination.</b> Click the Context icon in your toolbar to open
-          the panel, go to <b>Destinations</b>, and press <b>+</b>. A destination is
-          any site you search often.
-          <div class="step-detail">
-            The URL template is the trick: run a search on the site, copy the
-            resulting URL, and replace your search words with <code>{term}</code>.
-            <div class="examples">
-              <div><span class="ex-label">Google</span><code>https://www.google.com/search?q={term}</code></div>
-              <div><span class="ex-label">Gmail</span><code>https://mail.google.com/mail/u/0/#search/{term}</code></div>
-              <div><span class="ex-label">GitHub</span><code>https://github.com/search?q={term}&amp;type=issues</code></div>
-            </div>
-          </div>
+          <b>Add a destination</b> using the section below. A destination is any site you search often — press <b>+ Add</b>, give it a label, and paste a URL template with <code>{term}</code> where the search words go.
         </li>
         <li>
-          <b>Highlight text on any page</b> — a name, an email address, a ticket ID.
+          <b>Highlight text on any page.</b>
         </li>
         <li>
-          <b>Search it</b>, whichever way suits you:
+          <b>Search</b> whichever way suits you:
           <ul class="ways">
-            <li>Press <code id="k-open">⌘M</code> to open the panel with your highlighted text already filled in, then pick a destination.</li>
+            <li id="way-panel">Press <code id="k-open">⌘⇧S</code> to open the search panel (any highlighted text will load in the search bar), then click or tab over to one of your destinations.</li>
             <li>Right-click → <b>Context</b> → pick a destination.</li>
-            <li>Press <code>⌥1</code>, <code>⌥2</code>, or <code>⌥3</code> to jump straight to one of your top destinations.</li>
+            <li>Use keyboard shortcuts to search highlighted text even faster.</li>
           </ul>
         </li>
       </ol>
@@ -47,19 +35,58 @@
       </p>
     </section>
 
-    <section>
+    <section id="destinations-section">
       <div class="section-head">
-        <h2>Keyboard shortcuts</h2>
-        <button id="open-shortcuts" class="primary">Change in Chrome…</button>
+        <h2>Destinations</h2>
+        <button id="add-dest" class="primary">+ Add</button>
       </div>
-      <p class="hint">
-        Chrome owns these bindings — that's why Context needs no access to the
-        sites you visit. Quick-search slots map to your first five destinations,
-        in the order they appear in the panel. On macOS, <code>⌘M</code> may be
-        reserved for window-minimize; rebind it if it won't take.
-      </p>
-      <div id="shortcuts" class="shortcut-rows"></div>
+
+      <div id="dest-list" class="dest-list"></div>
+
+      <div class="shortcut-footer">
+        <div id="shortcuts" class="shortcut-rows"></div>
+        <button id="open-shortcuts" class="secondary">Manage keyboard shortcuts via Chrome</button>
+      </div>
     </section>
+
+    <section id="dest-form-section" hidden>
+      <h2 id="form-title">New destination</h2>
+
+      <div class="opt-field">
+        <label class="opt-label" for="f-label">Label</label>
+        <input type="text" id="f-label" placeholder="e.g. Gmail" />
+      </div>
+
+      <div class="opt-field">
+        <label class="opt-label" for="f-template">URL template</label>
+        <textarea id="f-template" rows="2" class="url-field" spellcheck="false"
+          placeholder="https://example.com/search?q={term}"></textarea>
+        <p class="form-helper">Use <code>{term}</code> where the search text goes. Run a search on the site, copy the URL, and replace your search words with <code>{term}</code>.</p>
+      </div>
+
+      <div class="opt-field">
+        <label class="opt-label" for="f-encoding">Encoding</label>
+        <select id="f-encoding">
+          <option value="plain">Plain (URL-encode) — works for most sites</option>
+          <option value="salesforce">Salesforce componentDef (base64)</option>
+          <option value="raw">Raw (no encoding)</option>
+        </select>
+      </div>
+
+      <label class="switch opt-field">
+        <input type="checkbox" id="f-newtab" />
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+        Always open a new tab
+      </label>
+
+      <div class="form-btns">
+        <button id="form-save" class="primary" disabled>Save</button>
+        <button id="form-cancel" class="secondary">Cancel</button>
+        <button id="form-delete" class="danger-btn" hidden>Delete</button>
+      </div>
+    </section>
+
+    <div class="status" id="status"></div>
 
     <script src="storage.js"></script>
     <script src="options.js"></script>

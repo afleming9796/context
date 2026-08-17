@@ -6,9 +6,9 @@ body {
   color: #222;
   background: #fafafa;
 }
-h1 { margin: 0 0 4px; font-size: 22px; }
+h1 { margin: 0; font-size: 22px; }
 h2 { margin: 0; font-size: 16px; }
-header .sub { color: #666; margin: 0 0 24px; }
+header { margin-bottom: 20px; }
 section {
   background: #fff;
   border: 1px solid #e4e4e7;
@@ -29,8 +29,6 @@ section {
   border-radius: 4px;
   font-size: 11px;
 }
-.rows { display: flex; flex-direction: column; gap: 10px; }
-
 input[type="text"],
 input:not([type]),
 select {
@@ -46,94 +44,6 @@ input:focus, select:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.del {
-  border: none;
-  background: transparent;
-  color: #999;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 6px 8px;
-}
-.del:hover { color: #c00; }
-.empty { color: #999; font-size: 13px; padding: 4px 2px; }
-
-/* Source row — label + pattern inline */
-.source-row {
-  display: grid;
-  grid-template-columns: 160px 1fr 32px;
-  gap: 8px;
-  align-items: center;
-}
-
-.source-card {
-  border: 1px solid #e4e4e7;
-  border-radius: 8px;
-  padding: 12px 14px;
-  background: #fafafa;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.source-top {
-  display: grid;
-  grid-template-columns: 160px 1fr auto;
-  gap: 8px;
-  align-items: center;
-}
-.source-bottom { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
-
-.inline-field {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #444;
-}
-.inline-label { color: #555; }
-.inline-field select {
-  padding: 4px 8px;
-  font-size: 12px;
-}
-
-/* Destination card — URL fields get full-width rows so long URLs are readable */
-.dest-card {
-  border: 1px solid #e4e4e7;
-  border-radius: 8px;
-  padding: 12px 14px;
-  background: #fafafa;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.dest-top {
-  display: grid;
-  grid-template-columns: 1fr 60px 220px auto;
-  gap: 8px;
-  align-items: center;
-}
-.dest-card .field {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.dest-card .field-label {
-  font-size: 11px;
-  color: #6b6b70;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-.dest-card .field input {
-  width: 100%;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 12px;
-}
-.dest-bottom {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-  margin-top: 2px;
 }
 
 /* iOS-style switch used across the options page */
@@ -170,58 +80,15 @@ input:focus, select:focus {
 .switch input:checked + .switch-track { background: #2563eb; }
 .switch input:checked + .switch-track .switch-thumb { transform: translateX(14px); }
 
-/* Keyboard shortcut recorder */
+/* Keyboard shortcut rows */
 .shortcut-rows { display: flex; flex-direction: column; gap: 6px; }
 .shortcut-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 .shortcut-label { font-size: 13px; color: #333; }
 .shortcut-note { color: #6b6b70; font-size: 12px; }
-.shortcut-field { display: flex; align-items: center; gap: 4px; }
-.shortcut-input {
-  width: 150px;
-  text-align: center;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 13px;
-  letter-spacing: 1px;
-  padding: 5px 8px;
-  border: 1px solid #d4d4d8;
-  border-radius: 6px;
-  background: #f9f9fb;
-  cursor: pointer;
-  caret-color: transparent;
-}
-.shortcut-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-.shortcut-input.recording {
-  background: #eef4ff;
-  border-color: #2563eb;
-}
-.shortcut-clear {
-  border: none;
-  background: transparent;
-  color: #999;
-  cursor: pointer;
-  font-size: 13px;
-  padding: 4px;
-}
-.shortcut-clear:hover { color: #c00; }
-.shortcut-sep {
-  font-size: 11px;
-  color: #6b6b70;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  margin-top: 8px;
-  margin-bottom: 2px;
-  padding-top: 8px;
-  border-top: 1px solid #e4e4e7;
-}
 
 /* Read-only key display for Chrome-managed shortcuts */
 .shortcut-key {
@@ -234,7 +101,7 @@ input:focus, select:focus {
 }
 .shortcut-key.unset { color: #999; font-style: italic; }
 
-/* Quick-search slot badge on the first four destinations */
+/* Quick-search slot badge on the first five destinations */
 .slot-badge {
   font-size: 11px;
   color: #2563eb;
@@ -244,6 +111,12 @@ input:focus, select:focus {
   padding: 2px 7px;
   white-space: nowrap;
   align-self: center;
+}
+.slot-badge.unset {
+  color: #a0a0a8;
+  background: #f7f7f8;
+  border-color: #e4e4e7;
+  font-style: italic;
 }
 
 button.primary {
@@ -278,35 +151,6 @@ button.primary:hover { background: #1d4ed8; }
 .steps { margin: 0; padding-left: 20px; }
 .steps > li { font-size: 13px; margin-bottom: 14px; line-height: 1.55; }
 .steps > li:last-child { margin-bottom: 0; }
-.step-detail {
-  margin-top: 7px;
-  font-size: 12px;
-  color: #666;
-  line-height: 1.55;
-}
-.examples {
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.examples > div { display: flex; align-items: center; gap: 8px; }
-.ex-label {
-  font-size: 10px;
-  font-weight: 600;
-  color: #6b6b70;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  flex: 0 0 52px;
-}
-.examples code {
-  background: #f1f1f3;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  overflow-wrap: anywhere;
-}
 .ways { margin: 6px 0 0; padding-left: 18px; }
 .ways li { font-size: 12.5px; color: #444; margin-bottom: 4px; line-height: 1.5; }
 .steps code, .ways code {
@@ -318,4 +162,133 @@ button.primary:hover { background: #1d4ed8; }
   font-size: 11px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
-.privacy .hint { margin-bottom: 0; }
+
+/* ---- Destinations list ---- */
+
+.dest-list { display: flex; flex-direction: column; gap: 1px; margin-top: 8px; }
+.dest-empty { color: #999; font-size: 13px; padding: 4px 2px; }
+
+.dest-row {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px solid #f0f0f2;
+}
+.dest-row:last-child { border-bottom: none; }
+
+.dest-row-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #222;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dest-row-url {
+  font-size: 11.5px;
+  color: #888;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dest-row-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.dest-row-right .secondary { padding: 4px 11px; font-size: 12px; }
+
+/* Shortcuts tucked under the destination list, same section */
+.shortcut-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #e4e4e7;
+}
+.shortcut-footer .shortcut-rows { flex: 1; min-width: 0; }
+
+/* ---- Destination form ---- */
+
+.opt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 14px;
+}
+.opt-field.switch {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.opt-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+}
+textarea,
+.url-field {
+  padding: 7px 10px;
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  min-width: 0;
+  background: #fff;
+  box-sizing: border-box;
+  width: 100%;
+  resize: vertical;
+}
+textarea:focus,
+.url-field:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.form-helper {
+  font-size: 11.5px;
+  color: #888;
+  line-height: 1.5;
+}
+.form-helper code {
+  background: #f1f1f3;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.form-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.form-btns .danger-btn { margin-left: auto; }
+
+button.secondary {
+  background: transparent;
+  color: #555;
+  border: 1px solid #d4d4d8;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font: inherit;
+  cursor: pointer;
+}
+button.secondary:hover { background: #f4f4f5; border-color: #b0b0b8; }
+
+button.danger-btn {
+  background: transparent;
+  color: #c00;
+  border: 1px solid #f5c6c6;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font: inherit;
+  cursor: pointer;
+}
+button.danger-btn:hover { background: #fff0f0; border-color: #f09090; }
