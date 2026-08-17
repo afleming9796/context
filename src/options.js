@@ -148,7 +148,17 @@
     const open = cmds.find((c) => c.name === "_execute_action");
     if (!open) return;
 
-    if (open.shortcut) document.getElementById("k-open").textContent = open.shortcut;
+    // The step above hardcodes the suggested key. If Chrome didn't take it (or
+    // the user cleared it), rewrite the step rather than telling them to press
+    // a key that does nothing.
+    if (open.shortcut) {
+      document.getElementById("k-open").textContent = open.shortcut;
+    } else {
+      document.getElementById("way-panel").textContent =
+        "Click the Context toolbar icon to open the search panel (any " +
+        "highlighted text will load in the search bar), then click or tab " +
+        "over to one of your destinations.";
+    }
 
     const row = document.createElement("div");
     row.className = "shortcut-row";

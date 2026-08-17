@@ -43,7 +43,7 @@ To pick up new changes after a `git pull`, go to `chrome://extensions` and click
 
 Chrome owns these bindings — that's why Context needs no access to the sites you visit. View them on the settings page; change them at `chrome://extensions/shortcuts`. Defaults:
 
-- **Open the Context panel** — `Ctrl+M` (`⌘M` on Mac; if macOS reserves it for window-minimize, rebind it)
+- **Open the Context panel** — `Ctrl+Shift+S` (`⌘⇧S` on Mac)
 - **Quick-search slots 1–3** — `Alt+1` / `Alt+2` / `Alt+3` (`⌥1`–`⌥3` on Mac)
 - **Quick-search slots 4 and 5** — unbound by default; assign keys (e.g. `Alt+4` / `Alt+5`) if you want them
 
