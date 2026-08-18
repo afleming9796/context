@@ -1,4 +1,4 @@
-/* Context — popup (toolbar panel)
+/* Link-a-roo — popup (toolbar panel)
    Hard-capped at 360px because Chrome auto-sizes the action popup to its
    content and a wide child would otherwise stretch it. */
 
@@ -15,9 +15,9 @@ body {
   width: 360px;
   max-width: 360px;
   overflow-x: hidden;
-  font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  background: #f7f7f8;
-  color: #1a1a1a;
+  font: 13px/1.5 var(--font-body);
+  background: var(--bg);
+  color: var(--text);
 }
 
 /* ---- Header ---- */
@@ -27,12 +27,17 @@ body {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border-bottom: 1px solid #e4e4e7;
-  background: #fff;
+  background: var(--surface);
 }
-.brand { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
-.brand img { width: 20px; height: 20px; display: block; }
-.brand h1 { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; }
+.brand { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.brand img { width: 28px; height: 28px; display: block; }
+.brand h1 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: var(--mesa-800);
+}
 
 .settings-btn {
   margin-left: auto;
@@ -40,14 +45,14 @@ body {
   font: inherit;
   font-size: 12px;
   font-weight: 600;
-  color: #71717a;
+  color: var(--text-soft);
   background: transparent;
   border: none;
   cursor: pointer;
   border-radius: 6px;
   transition: background 0.15s, color 0.15s;
 }
-.settings-btn:hover { color: #1a1a1a; background: #f4f4f5; }
+.settings-btn:hover { color: var(--accent); background: var(--accent-soft); }
 
 /* ---- Content ---- */
 
@@ -57,10 +62,10 @@ body {
 
 input[type="text"] {
   width: 100%;
-  background: #fff;
-  border: 1px solid #d4d4d8;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
   border-radius: 7px;
-  color: #1a1a1a;
+  color: var(--text);
   font: inherit;
   font-size: 12px;
   padding: 7px 9px;
@@ -68,10 +73,10 @@ input[type="text"] {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 input[type="text"]:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
-input::placeholder { color: #a1a1aa; }
+input::placeholder { color: var(--text-faint); }
 
 /* ---- Search view ---- */
 
@@ -83,20 +88,24 @@ input::placeholder { color: #a1a1aa; }
   align-items: center;
   gap: 6px;
   padding: 7px 11px;
-  background: #fff;
-  border: 1px solid #d4d4d8;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
   border-radius: 7px;
   font: inherit;
   font-size: 12px;
   font-weight: 500;
-  color: #27272a;
+  color: var(--text);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.1s;
 }
-.dest-btn:hover { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
+.dest-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+}
 .dest-btn:active { transform: translateY(1px); }
 
-.shake { animation: shake 0.35s; border-color: #dc2626 !important; }
+.shake { animation: shake 0.35s; border-color: var(--danger) !important; }
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-4px); }
@@ -108,23 +117,23 @@ input::placeholder { color: #a1a1aa; }
 .empty-cta {
   margin-top: 14px;
   padding: 16px 14px;
-  background: #fff;
-  border: 1px solid #e4e4e7;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 9px;
   text-align: center;
 }
-.empty-title { font-size: 13px; font-weight: 600; }
-.empty-desc { font-size: 11.5px; color: #71717a; margin: 5px 0 12px; }
+.empty-title { font-family: var(--font-display); font-size: 14px; font-weight: 600; }
+.empty-desc { font-size: 11.5px; color: var(--text-soft); margin: 5px 0 12px; }
 .open-settings-btn {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 7px 14px;
   border: none; border-radius: 7px;
   font: inherit; font-size: 12px; font-weight: 600;
   cursor: pointer;
-  background: #2563eb; color: #fff;
+  background: var(--accent); color: var(--sand-50);
   transition: background 0.15s;
 }
-.open-settings-btn:hover { background: #1d4ed8; }
+.open-settings-btn:hover { background: var(--accent-hover); }
 
 /* ---- Tip card ---- */
 
@@ -132,49 +141,47 @@ input::placeholder { color: #a1a1aa; }
   position: relative;
   margin-top: 14px;
   padding: 11px 12px;
-  background: #fff;
-  border: 1px solid #e4e4e7;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
   border-radius: 9px;
 }
-.tip-title { font-size: 12px; font-weight: 600; margin-bottom: 7px; }
+.tip-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
 .tip-list { margin: 0 0 8px 15px; padding: 0; }
-.tip-list li { font-size: 11.5px; color: #52525b; margin-bottom: 5px; line-height: 1.45; }
+.tip-list li { font-size: 11.5px; color: var(--text-soft); margin-bottom: 5px; line-height: 1.45; }
 .tip code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 10.5px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: var(--surface-sunk);
+  color: var(--turq-600);
+  border: 1px solid var(--border-strong);
   border-radius: 4px;
   padding: 0 4px;
 }
-.tip a { font-size: 11.5px; color: #2563eb; text-decoration: none; font-weight: 600; }
+.tip a { font-size: 11.5px; color: var(--accent); text-decoration: none; font-weight: 600; }
 .tip a:hover { text-decoration: underline; }
 .tip-close {
   position: absolute;
   top: 6px; right: 6px;
   background: none; border: none; cursor: pointer;
-  color: #a1a1aa; font-size: 12px; line-height: 1;
+  color: var(--text-faint); font-size: 12px; line-height: 1;
   padding: 3px 5px; border-radius: 4px;
 }
-.tip-close:hover { color: #27272a; background: #f4f4f5; }
+.tip-close:hover { color: var(--text); background: var(--surface-sunk); }
 
 .shortcuts-tip {
   margin-top: 10px;
-  font-size: 11px; color: #71717a; line-height: 1.4;
+  font-size: 11px; color: var(--text-soft); line-height: 1.4;
 }
-.shortcuts-tip a { color: #2563eb; text-decoration: none; }
+.shortcuts-tip a { color: var(--accent); text-decoration: none; }
 .shortcuts-tip a:hover { text-decoration: underline; }
 
 @media (prefers-color-scheme: dark) {
-  body { background: #18181b; color: #f4f4f5; }
-  .header, .empty-cta, .tip, input[type="text"], .dest-btn {
-    background: #232327; border-color: #3f3f46; color: #f4f4f5;
-  }
-  .header { border-bottom-color: #3f3f46; }
-  .settings-btn:hover { background: #2c2c31; color: #f4f4f5; }
-  .dest-btn { color: #e4e4e7; }
-  .dest-btn:hover { background: #1e3a8a33; color: #93c5fd; border-color: #3b82f6; }
-  .tip-close:hover { background: #2c2c31; color: #f4f4f5; }
-  .tip code { background: #1e3a8a33; color: #93c5fd; border-color: #1e40af; }
+  .brand h1 { color: var(--text); }
+  .tip code { color: var(--turq-400); }
 }

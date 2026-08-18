@@ -1,6 +1,6 @@
-// Context — popup (the toolbar panel)
+// Link-a-roo — popup (the toolbar panel)
 //
-// This is Context's main surface. Opening it (toolbar click or the Chrome
+// This is Link-a-roo's main surface. Opening it (toolbar click or the Chrome
 // shortcut) grants activeTab, so we can read the current page's selection and
 // pre-fill the search box — the same "grab the highlighted text" behaviour the
 // old injected widget had, without running anything on the page until asked.
@@ -40,7 +40,7 @@
         matchDomain,
       });
     } catch (e) {
-      console.warn("Context: search request failed", e);
+      console.warn("Link-a-roo: search request failed", e);
     }
     window.close();
   }

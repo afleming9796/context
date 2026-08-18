@@ -1,0 +1,81 @@
+/* Link-a-roo — shared theme tokens.
+   Northern New Mexico palette: adobe plaster and sand, terracotta roof tile,
+   turquoise inlay, chile red, piñon green, and late sun on the mesa. Both the
+   popup and the settings page consume these, so the two surfaces can't drift. */
+
+:root {
+  /* Raw palette */
+  --sand-50: #FBF6EC;
+  --sand-100: #F5EADA;
+  --sand-200: #EADCC6;
+  --sand-300: #D9C6A6;
+  --clay-400: #C86B4A;
+  --clay-500: #B85C38;
+  --clay-600: #9C4A2A;
+  --turq-400: #3AA6A0;
+  --turq-500: #2E8B84;
+  --turq-600: #226E68;
+  --chile: #A63A2B;
+  --pinon: #7C8C6B;
+  --gold: #E8913C;
+  --mesa-700: #6B4423;
+  --mesa-800: #4A2F1A;
+  --mesa-900: #2C1D11;
+
+  /* Semantic roles */
+  --bg: var(--sand-50);
+  --surface: #FFFCF6;
+  --surface-sunk: var(--sand-100);
+  --border: var(--sand-200);
+  --border-strong: var(--sand-300);
+  --text: var(--mesa-900);
+  --text-soft: #806A54;
+  --text-faint: #A08D77;
+  --accent: var(--clay-500);
+  --accent-hover: var(--clay-600);
+  --accent-soft: #F6E4D8;
+  --focus: var(--turq-500);
+  --focus-ring: rgba(46, 139, 132, 0.22);
+  --danger: var(--chile);
+  --danger-soft: #F6DED9;
+
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-display: "Hoefler Text", Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Night on the high desert: everything drops to burnt umber, and the
+       turquoise/gold accents do the lifting. */
+    --bg: #1C160F;
+    --surface: #262019;
+    --surface-sunk: #201A14;
+    --border: #3D3327;
+    --border-strong: #4E4132;
+    --text: #F2E7D6;
+    --text-soft: #BCA88E;
+    --text-faint: #8E7A62;
+    --accent: var(--clay-400);
+    --accent-hover: #D87C5A;
+    --accent-soft: #3A2519;
+    --focus: var(--turq-400);
+    --focus-ring: rgba(58, 166, 160, 0.28);
+    --danger: #D4614E;
+    --danger-soft: #3A1F1A;
+  }
+}
+
+/* Woven blanket stripe — the one piece of ornament, used to cap a header. */
+.serape {
+  height: 3px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    var(--clay-500) 0 18%,
+    var(--gold) 18% 34%,
+    var(--turq-500) 34% 54%,
+    var(--chile) 54% 72%,
+    var(--pinon) 72% 100%
+  );
+}

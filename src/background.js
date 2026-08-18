@@ -1,5 +1,5 @@
-// Context — Background Service Worker
-// - Rebuilds the right-click "Context" submenu from configured destinations.
+// Link-a-roo — Background Service Worker
+// - Rebuilds the right-click "Link-a-roo" submenu from configured destinations.
 // - Handles the quick-search keyboard slots (read the selection under an
 //   activeTab grant, then open the destination).
 // - Reuses tabs and opens the settings page on first install.
@@ -18,7 +18,7 @@ const S = globalThis.CtxStorage;
 let rebuildChain = Promise.resolve();
 function rebuildContextMenus() {
   rebuildChain = rebuildChain.then(doRebuildContextMenus).catch((e) =>
-    console.warn("Context: rebuildContextMenus failed", e)
+    console.warn("Link-a-roo: rebuildContextMenus failed", e)
   );
   return rebuildChain;
 }
@@ -30,7 +30,7 @@ async function doRebuildContextMenus() {
 
   chrome.contextMenus.create({
     id: "context-parent",
-    title: "Context",
+    title: "Link-a-roo",
     contexts: ["selection"],
   });
   for (const dest of settings.destinations) {
@@ -143,7 +143,7 @@ async function openOrReuseTab(url, matchDomain) {
         return;
       }
     } catch (e) {
-      console.warn("Context: could not reuse a tab, opening a new one", e);
+      console.warn("Link-a-roo: could not reuse a tab, opening a new one", e);
     }
   }
   await chrome.tabs.create({ url });
