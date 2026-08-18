@@ -23,7 +23,7 @@ header {
   gap: 11px;
   margin-bottom: 6px;
 }
-header img { width: 44px; height: 44px; display: block; }
+header img { height: 54px; width: auto; display: block; }
 header .serape { margin-bottom: 20px; border-radius: 2px; }
 
 section {

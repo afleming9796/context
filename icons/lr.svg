@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Toolbar monogram. Geometry deliberately mirrors LingoFrog's LF mark so
+       the two extensions read as siblings: same 128 tile, same rx, same 18-wide
+       stems, same 22..106 letter span. Tile colour is the Taos door turquoise. -->
+  <rect x="0" y="0" width="128" height="128" rx="24" fill="#3E9CA1"/>
+
+  <!-- L -->
+  <rect x="22" y="22" width="18" height="84" fill="#fffaf0"/>
+  <rect x="22" y="92" width="44" height="14" fill="#fffaf0"/>
+
+  <!-- R -->
+  <rect x="72" y="22" width="18" height="84" fill="#fffaf0"/>
+  <rect x="72" y="22" width="42" height="14" fill="#fffaf0"/>
+  <rect x="98" y="22" width="16" height="46" fill="#fffaf0"/>
+  <rect x="72" y="54" width="42" height="14" fill="#fffaf0"/>
+  <polygon points="90,68 104,68 114,106 100,106" fill="#fffaf0"/>
+</svg>

@@ -1,26 +1,28 @@
 /* Link-a-roo — shared theme tokens.
-   Northern New Mexico palette: adobe plaster and sand, terracotta roof tile,
-   turquoise inlay, chile red, piñon green, and late sun on the mesa. Both the
-   popup and the settings page consume these, so the two surfaces can't drift. */
+   Palette lifted from a Taos adobe doorway: plaster and sand walls, a soft
+   turquoise door, a chile ristra, piñon green, and a terracotta pot. The door
+   blue is the lead accent. Both the popup and the settings page consume these,
+   so the two surfaces can't drift. */
 
 :root {
   /* Raw palette */
-  --sand-50: #FBF6EC;
-  --sand-100: #F5EADA;
-  --sand-200: #EADCC6;
-  --sand-300: #D9C6A6;
-  --clay-400: #C86B4A;
-  --clay-500: #B85C38;
-  --clay-600: #9C4A2A;
-  --turq-400: #3AA6A0;
-  --turq-500: #2E8B84;
-  --turq-600: #226E68;
-  --chile: #A63A2B;
-  --pinon: #7C8C6B;
-  --gold: #E8913C;
-  --mesa-700: #6B4423;
-  --mesa-800: #4A2F1A;
-  --mesa-900: #2C1D11;
+  --sand-50: #F7F1E6;   /* sunlit plaster */
+  --sand-100: #F0E7D8;
+  --sand-200: #E2D5BF;
+  --sand-300: #CDB99C;  /* adobe wall in shade */
+  --turq-300: #A6DEDF;  /* door, catching light */
+  --turq-400: #79C8CB;  /* the door blue */
+  --turq-500: #4FA5AA;
+  --turq-600: #2F878C;  /* deep enough to carry cream text */
+  --turq-700: #256E73;
+  --clay-500: #B5654A;  /* terracotta pot */
+  --clay-600: #964E38;
+  --chile: #A8342A;     /* ristra red */
+  --pinon: #6B8352;     /* piñon green */
+  --gold: #E8913C;      /* the lasso */
+  --mesa-700: #5A4632;
+  --mesa-800: #3E2E20;
+  --mesa-900: #2A1F15;
 
   /* Semantic roles */
   --bg: var(--sand-50);
@@ -29,13 +31,13 @@
   --border: var(--sand-200);
   --border-strong: var(--sand-300);
   --text: var(--mesa-900);
-  --text-soft: #806A54;
-  --text-faint: #A08D77;
-  --accent: var(--clay-500);
-  --accent-hover: var(--clay-600);
-  --accent-soft: #F6E4D8;
+  --text-soft: #7A6752;
+  --text-faint: #A08F79;
+  --accent: var(--turq-600);
+  --accent-hover: var(--turq-700);
+  --accent-soft: #DFF0F0;
   --focus: var(--turq-500);
-  --focus-ring: rgba(46, 139, 132, 0.22);
+  --focus-ring: rgba(121, 200, 203, 0.38);
   --danger: var(--chile);
   --danger-soft: #F6DED9;
 
@@ -46,36 +48,37 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Night on the high desert: everything drops to burnt umber, and the
-       turquoise/gold accents do the lifting. */
-    --bg: #1C160F;
-    --surface: #262019;
-    --surface-sunk: #201A14;
-    --border: #3D3327;
-    --border-strong: #4E4132;
-    --text: #F2E7D6;
-    --text-soft: #BCA88E;
-    --text-faint: #8E7A62;
-    --accent: var(--clay-400);
-    --accent-hover: #D87C5A;
-    --accent-soft: #3A2519;
+    /* Night on the high desert: adobe goes to shadow and the door blue is
+       what's left catching the light. */
+    --bg: #1E1913;
+    --surface: #2A231A;
+    --surface-sunk: #241E16;
+    --border: #3E3427;
+    --border-strong: #52452F;
+    --text: #F2E9DA;
+    --text-soft: #BFAB90;
+    --text-faint: #8E7B63;
+    --accent: var(--turq-500);
+    --accent-hover: var(--turq-400);
+    --accent-soft: #1D3536;
     --focus: var(--turq-400);
-    --focus-ring: rgba(58, 166, 160, 0.28);
+    --focus-ring: rgba(121, 200, 203, 0.32);
     --danger: #D4614E;
     --danger-soft: #3A1F1A;
   }
 }
 
-/* Woven blanket stripe — the one piece of ornament, used to cap a header. */
+/* Woven blanket stripe — the one piece of ornament, used to cap a header.
+   Reads left to right like the doorway: wall, door, ristra, piñon. */
 .serape {
   height: 3px;
   flex-shrink: 0;
   background: linear-gradient(
     90deg,
-    var(--clay-500) 0 18%,
-    var(--gold) 18% 34%,
-    var(--turq-500) 34% 54%,
-    var(--chile) 54% 72%,
-    var(--pinon) 72% 100%
+    var(--clay-500) 0 16%,
+    var(--gold) 16% 30%,
+    var(--turq-400) 30% 58%,
+    var(--chile) 58% 76%,
+    var(--pinon) 76% 100%
   );
 }

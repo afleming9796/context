@@ -30,7 +30,7 @@ body {
   background: var(--surface);
 }
 .brand { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.brand img { width: 28px; height: 28px; display: block; }
+.brand img { height: 30px; width: auto; display: block; }
 .brand h1 {
   font-family: var(--font-display);
   font-size: 17px;
