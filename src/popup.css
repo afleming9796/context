@@ -55,7 +55,8 @@ body {
 
 /* ---- Fields ---- */
 
-input[type="text"] {
+input[type="text"],
+textarea {
   width: 100%;
   background: #fff;
   border: 1px solid #d4d4d8;
@@ -67,15 +68,27 @@ input[type="text"] {
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
-input[type="text"]:focus {
+input[type="text"]:focus,
+textarea:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
-input::placeholder { color: #a1a1aa; }
+input::placeholder,
+textarea::placeholder { color: #a1a1aa; }
 
 /* ---- Search view ---- */
 
-.search-top input { font-size: 13px; padding: 8px 10px; }
+/* The search box grows with its content (see autoGrow in popup.js), so the
+   drag handle is off and overflow only kicks in at the JS height cap. */
+.search-top textarea {
+  display: block;
+  font-size: 13px;
+  padding: 8px 10px;
+  line-height: 1.45;
+  resize: none;
+  overflow-y: auto;
+  max-height: 132px;
+}
 
 .btn-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .dest-btn {
@@ -168,7 +181,7 @@ input::placeholder { color: #a1a1aa; }
 
 @media (prefers-color-scheme: dark) {
   body { background: #18181b; color: #f4f4f5; }
-  .header, .empty-cta, .tip, input[type="text"], .dest-btn {
+  .header, .empty-cta, .tip, input[type="text"], textarea, .dest-btn {
     background: #232327; border-color: #3f3f46; color: #f4f4f5;
   }
   .header { border-bottom-color: #3f3f46; }
