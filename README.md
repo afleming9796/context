@@ -12,7 +12,7 @@ Link-a-roo is keyboard-first and permission-light. Nothing runs on any page unti
 - **Right-click context menu**: highlight text on any page → search it in any configured destination.
 - **Tab reuse**: Link-a-roo reopens the destination in an existing tab on that site instead of piling up duplicates. Toggle it off per destination.
 
-Link-a-roo deliberately keeps no history of what you search — it just opens URLs.
+Link-a-roo deliberately keeps no history of what you search — it just opens URLs. An early version had a remember-searches feature that was split out into a separate companion extension; updating clears any search terms it left behind in local storage.
 
 ## Permissions
 
