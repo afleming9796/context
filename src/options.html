@@ -2,43 +2,48 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Context — Settings</title>
+    <title>Link-a-roo — Settings</title>
+    <link rel="stylesheet" href="theme.css" />
     <link rel="stylesheet" href="options.css" />
   </head>
   <body>
-    <header>
-      <h1>Context</h1>
-    </header>
+    <div class="shell">
+      <div class="stripe shell-stripe"></div>
+      <header>
+        <img src="../icons/lasso.svg" alt="" />
+        <h1>Link<span class="hy">-</span>a<span class="hy">-</span>roo</h1>
+      </header>
+      <div class="shell-body">
 
-    <section class="start">
-      <h2>Getting started</h2>
-      <ol class="steps">
-        <li>
-          <b>Add a destination</b> using the section below. A destination is any site you search often — press <b>+ Add</b>, give it a label, and paste a URL template with <code>{term}</code> where the search words go.
-        </li>
-        <li>
-          <b>Highlight text on any page.</b>
-        </li>
-        <li>
-          <b>Search</b> whichever way suits you:
-          <ul class="ways">
-            <li id="way-panel">Press <code id="k-open">⌘⇧S</code> to open the search panel (any highlighted text will load in the search bar), then click or tab over to one of your destinations.</li>
-            <li>Right-click → <b>Context</b> → pick a destination.</li>
-            <li>Use keyboard shortcuts to search highlighted text even faster.</li>
-          </ul>
-        </li>
-      </ol>
-      <p class="hint">
-        Context reuses an existing tab on the destination site when it can, so
-        you don't end up with twelve Gmail tabs. Turn that off per destination
-        with <b>Always open a new tab</b>.
-      </p>
-    </section>
+      <section class="start">
+        <h2>Getting started</h2>
+        <ol class="steps">
+          <li>
+            <b>Add a destination</b> using the section below. A destination is any site you search often — press <b>+ Add</b>, give it a label, and paste a URL template with <code>{term}</code> where the search words go.
+          </li>
+          <li>
+            <b>Highlight text on any page.</b>
+          </li>
+          <li>
+            <b>Search</b> whichever way suits you:
+            <ul class="ways">
+              <li id="way-panel">Press <code id="k-open">⌘⇧S</code> to open the search panel (any highlighted text will load in the search bar), then click or tab over to one of your destinations.</li>
+              <li>Right-click → <b>Link-a-roo</b> → pick a destination.</li>
+              <li>Use keyboard shortcuts to search highlighted text even faster.</li>
+            </ul>
+          </li>
+        </ol>
+        <p class="hint">
+          Link-a-roo reuses an existing tab on the destination site when it can, so
+          you don't end up with twelve Gmail tabs. Turn that off per destination
+          with <b>Always open a new tab</b>.
+        </p>
+      </section>
 
-    <section id="destinations-section">
-      <div class="section-head">
-        <h2>Destinations</h2>
-        <button id="add-dest" class="primary">+ Add</button>
+      <section id="destinations-section">
+        <div class="section-head">
+          <h2>Destinations</h2>
+          <button id="add-dest" class="primary">+ Add</button>
       </div>
 
       <div id="dest-list" class="dest-list"></div>
@@ -85,6 +90,9 @@
         <button id="form-delete" class="danger-btn" hidden>Delete</button>
       </div>
     </section>
+
+      </div>
+    </div>
 
     <div class="status" id="status"></div>
 

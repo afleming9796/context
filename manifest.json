@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Context",
+  "name": "Link-a-roo",
   "version": "5.0.0",
   "description": "Highlight text and search it anywhere — your own destinations, one keystroke away",
   "icons": {
@@ -18,7 +18,7 @@
   ],
   "options_page": "src/options.html",
   "action": {
-    "default_title": "Context",
+    "default_title": "Link-a-roo",
     "default_popup": "src/popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",

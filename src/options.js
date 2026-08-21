@@ -1,4 +1,4 @@
-// Context — Settings page
+// Link-a-roo — Settings page
 
 (function () {
   "use strict";
@@ -155,7 +155,7 @@
       document.getElementById("k-open").textContent = open.shortcut;
     } else {
       document.getElementById("way-panel").textContent =
-        "Click the Context toolbar icon to open the search panel (any " +
+        "Click the Link-a-roo toolbar icon to open the search panel (any " +
         "highlighted text will load in the search bar), then click or tab " +
         "over to one of your destinations.";
     }
@@ -165,7 +165,7 @@
 
     const label = document.createElement("span");
     label.className = "shortcut-label";
-    label.append("Open the Context panel");
+    label.append("Open the Link-a-roo panel");
     const note = document.createElement("span");
     note.className = "shortcut-note";
     note.textContent = " (highlighted text appears as the search term)";

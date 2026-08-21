@@ -1,0 +1,134 @@
+/* Link-a-roo — shared design tokens.
+   Taos, New Mexico: turquoise doors against adobe, sun-bleached plaster, sand,
+   chile red, piñon ink. Hex values come straight from the design handoff.
+
+   Both the popup and the settings page load this, so the two surfaces can't
+   drift apart. No build step — plain custom properties. */
+
+/* Chivo carries the wordmark and section headings. Bundled locally rather than
+   linked from Google Fonts so opening the panel makes no network request.
+   One file covers 700–900: it's a variable font. */
+@font-face {
+  font-family: "Chivo";
+  src: url("../fonts/chivo-latin.woff2") format("woff2");
+  font-weight: 700 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Brand */
+  --taos: #2C7D8C;
+  --deep-turquoise: #1F5C68;
+  --adobe: #C97B52;
+  --sand: #E8C9A0;
+
+  /* Semantic — accent */
+  --accent: var(--taos);
+  --accent-hover: var(--deep-turquoise);
+  --on-accent: #FFFFFF;
+  --accent-bg: #E7F1F2;
+  --accent-border: #B6D8DC;
+  --accent-ink: var(--deep-turquoise);
+  --focus-ring: rgba(44, 125, 140, 0.14);
+  --focus-ring-strong: rgba(44, 125, 140, 0.16);
+
+  /* Semantic — destructive */
+  --danger: #B4402F;
+  --danger-bg: #FBEFEC;
+  --danger-border: #E8BFB6;
+
+  /* Surfaces.
+     An edge-to-edge tan panel reads as dirty against Chrome's white, so the
+     popup body is essentially white and the warmth is confined to the stripe,
+     the header strip, and the tip card. */
+  --paper: #FFFDFA;        /* popup body */
+  --page-bg: #F3EBDF;      /* options page body */
+  --plaster: #FAF4EA;      /* popup header strip, options shell */
+  --plaster-tint: #FBF5EB; /* tip card, empty-state well */
+  --well: #F6EFE3;         /* key caps, unset badges, secondary hover */
+  --card: #FFFFFF;
+  --surface-hover: #EBDFCC;
+  --code-bg: #F1E8DA;
+
+  /* Lines. The options page keeps the warmer family — its sections sit on the
+     plaster shell rather than on white. */
+  --border: #E6DACA;
+  --border-soft: #EDE2D2;
+  --border-field: #D5C6B2;
+  --border-section: #E3D6C3;
+  --border-strong: #D8CBB8;
+  --row-divider: #F1E8DA;
+
+  /* Text */
+  --ink: #3A2E28;
+  --ink-2: #4A3B33;
+  --muted: #6B584C;
+  --muted-2: #8B7A6C;
+  --faint: #A8968A;
+
+  /* The woven stripe band — the one decorative element in the design. */
+  --stripe-blue: var(--taos);
+  --stripe-blue-deep: var(--deep-turquoise);
+
+  --font-display: "Chivo", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: #48A9B8;
+    --accent-hover: #6FC3CE;
+    --on-accent: #10262A;
+    --accent-bg: #1E3438;
+    --accent-border: #2C7D8C;
+    --accent-ink: #6FC3CE;
+    --focus-ring: rgba(72, 169, 184, 0.20);
+    --focus-ring-strong: rgba(72, 169, 184, 0.22);
+
+    --danger: #D4614E;
+    --danger-bg: #33211D;
+    --danger-border: #5C3A33;
+
+    --paper: #221C19;
+    --page-bg: #221C19;
+    --plaster: #2A2320;
+    --plaster-tint: #2A2320;
+    --well: #2A2320;
+    --card: #2A2320;
+    --surface-hover: #342B27;
+    --code-bg: #241E1B;
+
+    --border: #3B302A;
+    --border-soft: #3B302A;
+    --border-field: #4A3D36;
+    --border-section: #3B302A;
+    --border-strong: #3B302A;
+    --row-divider: #3B302A;
+
+    --ink: #F2E9DC;
+    --ink-2: #E0D3C4;
+    --muted: #9C8B7E;
+    --muted-2: #9C8B7E;
+    --faint: #7D6C60;
+
+    --adobe: #E0A175;
+
+    /* Handoff swaps only the two blues in the band; adobe and sand hold. */
+    --stripe-blue: #48A9B8;
+    --stripe-blue-deep: #2C7D8C;
+  }
+}
+
+/* 4px in the popup, 5px on the settings shell — set by the consumer. */
+.stripe {
+  flex-shrink: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--stripe-blue) 0 14px,
+    #C97B52 14px 20px,
+    #E8C9A0 20px 26px,
+    var(--stripe-blue-deep) 26px 34px
+  );
+}
