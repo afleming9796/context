@@ -193,6 +193,7 @@
   const TABS_PERM = { permissions: ["tabs"] };
   const reuseToggle = document.getElementById("reuse-toggle");
   const reuseExplainer = document.getElementById("reuse-explainer");
+  const reuseNote = document.getElementById("reuse-note");
 
   async function syncReuseToggle() {
     let granted = false;
@@ -203,6 +204,7 @@
     }
     reuseToggle.checked = granted;
     reuseExplainer.hidden = true;
+    reuseNote.hidden = true;
   }
 
   reuseToggle.addEventListener("change", async () => {
@@ -214,13 +216,29 @@
       return;
     }
     reuseExplainer.hidden = true;
+
+    // remove() reports whether Chrome actually released the permission. It can
+    // refuse — notably when the grant predates this build, from back when
+    // "tabs" was required rather than optional. Trusting the call instead of
+    // its answer is what made the switch flip itself back on with no
+    // explanation and a "Tab reuse off" toast that wasn't true.
+    let removed = false;
     try {
-      await chrome.permissions.remove(TABS_PERM);
-      flash("Tab reuse off");
+      removed = await chrome.permissions.remove(TABS_PERM);
     } catch (_) {
-      /* nothing granted to remove */
+      removed = false;
     }
-    syncReuseToggle();
+
+    if (removed) {
+      reuseToggle.checked = false;
+      reuseNote.hidden = true;
+      flash("Tab reuse off");
+      return;
+    }
+
+    // Put the switch back where reality is, then say why it moved.
+    await syncReuseToggle();
+    reuseNote.hidden = false;
   });
 
   document.getElementById("reuse-continue").addEventListener("click", () => {

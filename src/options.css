@@ -390,3 +390,22 @@ button.danger-btn:hover { background: var(--danger-bg); border-color: var(--dang
 }
 .perm-body:last-of-type { margin-bottom: 0; }
 .perm-explainer .form-btns { margin-top: 14px; }
+
+/* Shown when Chrome declines to release the optional permission. */
+.perm-note {
+  margin-top: 12px;
+  padding: 11px 13px;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.perm-note code {
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
