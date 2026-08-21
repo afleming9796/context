@@ -43,16 +43,34 @@ async function doRebuildContextMenus() {
   }
 }
 
+// ---- Legacy data cleanup ----
+
+// Keys written by earlier versions and never read since. "lastSearch" is the
+// important one: the remember-searches feature was split out into a separate
+// companion extension, but the search terms it had already written stayed in
+// local storage. The extension has no use for them and claims to keep no
+// search history, so clear them out rather than carrying them forever.
+const LEGACY_KEYS = ["lastSearch", "visibility", "panelSlots"];
+
+function purgeLegacyKeys() {
+  // Removing absent keys is a no-op, so this is safe to run repeatedly.
+  return chrome.storage.local.remove(LEGACY_KEYS);
+}
+
 // First install: open the settings page, which is where the getting-started
 // walkthrough lives. Without this, a new user has an icon and no idea what a
 // "destination" is.
 chrome.runtime.onInstalled.addListener(async (details) => {
+  await purgeLegacyKeys();
   await S.seedDefaultsIfEmpty();
   rebuildContextMenus();
   if (details.reason === "install") chrome.runtime.openOptionsPage();
 });
 
-chrome.runtime.onStartup.addListener(rebuildContextMenus);
+chrome.runtime.onStartup.addListener(() => {
+  purgeLegacyKeys();
+  rebuildContextMenus();
+});
 // Cold SW wake: ensure menus exist.
 rebuildContextMenus();
 
