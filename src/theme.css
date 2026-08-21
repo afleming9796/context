@@ -38,17 +38,26 @@
   --danger-bg: #FBEFEC;
   --danger-border: #E8BFB6;
 
-  /* Surfaces */
-  --page-bg: #ECE4D6;
-  --plaster: #F6EFE3;
-  --plaster-deep: #F1E8DA;
+  /* Surfaces.
+     An edge-to-edge tan panel reads as dirty against Chrome's white, so the
+     popup body is essentially white and the warmth is confined to the stripe,
+     the header strip, and the tip card. */
+  --paper: #FFFDFA;        /* popup body */
+  --page-bg: #F3EBDF;      /* options page body */
+  --plaster: #FAF4EA;      /* popup header strip, options shell */
+  --plaster-tint: #FBF5EB; /* tip card, empty-state well */
+  --well: #F6EFE3;         /* key caps, unset badges, secondary hover */
   --card: #FFFFFF;
   --surface-hover: #EBDFCC;
+  --code-bg: #F1E8DA;
 
-  /* Lines */
-  --border: #D8CBB8;
-  --border-soft: #E3D6C3;
-  --border-field: #CBBCA6;
+  /* Lines. The options page keeps the warmer family — its sections sit on the
+     plaster shell rather than on white. */
+  --border: #E6DACA;
+  --border-soft: #EDE2D2;
+  --border-field: #D5C6B2;
+  --border-section: #E3D6C3;
+  --border-strong: #D8CBB8;
   --row-divider: #F1E8DA;
 
   /* Text */
@@ -82,15 +91,20 @@
     --danger-bg: #33211D;
     --danger-border: #5C3A33;
 
+    --paper: #221C19;
     --page-bg: #221C19;
     --plaster: #2A2320;
-    --plaster-deep: #241E1B;
+    --plaster-tint: #2A2320;
+    --well: #2A2320;
     --card: #2A2320;
     --surface-hover: #342B27;
+    --code-bg: #241E1B;
 
     --border: #3B302A;
     --border-soft: #3B302A;
     --border-field: #4A3D36;
+    --border-section: #3B302A;
+    --border-strong: #3B302A;
     --row-divider: #3B302A;
 
     --ink: #F2E9DC;
