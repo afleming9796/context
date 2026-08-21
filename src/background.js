@@ -143,11 +143,23 @@ function hostOf(url) {
   }
 }
 
+// Reuse needs "tabs", which is optional and granted from the settings page.
+// Without it chrome.tabs.query still returns tabs, but every url is undefined,
+// so the lookup would silently match nothing — check the grant instead of
+// letting it fail quietly.
+async function canReuseTabs() {
+  try {
+    return await chrome.permissions.contains({ permissions: ["tabs"] });
+  } catch (_) {
+    return false;
+  }
+}
+
 // Awaitable so callers can keep the service worker alive until the tab has
 // actually been opened or navigated. Any failure in the reuse path falls
 // through to opening a new tab — a search should never silently go nowhere.
 async function openOrReuseTab(url, matchDomain) {
-  if (matchDomain) {
+  if (matchDomain && (await canReuseTabs())) {
     try {
       const tabs = await chrome.tabs.query({});
       const existing = tabs.find((t) => sameHost(hostOf(t.url), matchDomain));

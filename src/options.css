@@ -356,3 +356,37 @@ button.danger-btn {
   transition: background 0.15s, border-color 0.15s;
 }
 button.danger-btn:hover { background: var(--danger-bg); border-color: var(--danger); }
+
+/* ---- Tab reuse permission prompt ---- */
+
+.reuse-question {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+/* Shown only after the switch is flipped on, to explain what Chrome is about
+   to ask for before Chrome asks it. */
+.perm-explainer {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: var(--plaster-tint);
+  border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+}
+.perm-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 7px;
+}
+.perm-body {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.perm-body:last-of-type { margin-bottom: 0; }
+.perm-explainer .form-btns { margin-top: 14px; }

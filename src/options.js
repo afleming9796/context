@@ -183,6 +183,72 @@
     chrome.tabs.create({ url: "chrome://extensions/shortcuts" });
   });
 
+  // ---- Tab reuse (optional "tabs" permission) ----
+  //
+  // Reuse needs to read the addresses of open tabs, which is the one broad
+  // thing this extension can ask for — so it is opt-in, and the grant itself
+  // is the stored state. There is no separate settings flag to drift out of
+  // sync with what Chrome actually allows.
+
+  const TABS_PERM = { permissions: ["tabs"] };
+  const reuseToggle = document.getElementById("reuse-toggle");
+  const reuseExplainer = document.getElementById("reuse-explainer");
+
+  async function syncReuseToggle() {
+    let granted = false;
+    try {
+      granted = await chrome.permissions.contains(TABS_PERM);
+    } catch (_) {
+      /* treat an unreadable grant as "off" */
+    }
+    reuseToggle.checked = granted;
+    reuseExplainer.hidden = true;
+  }
+
+  reuseToggle.addEventListener("change", async () => {
+    if (reuseToggle.checked) {
+      // Explain before Chrome's own prompt. The switch stays off until the
+      // permission is actually granted, so it never shows a state we don't have.
+      reuseToggle.checked = false;
+      reuseExplainer.hidden = false;
+      return;
+    }
+    reuseExplainer.hidden = true;
+    try {
+      await chrome.permissions.remove(TABS_PERM);
+      flash("Tab reuse off");
+    } catch (_) {
+      /* nothing granted to remove */
+    }
+    syncReuseToggle();
+  });
+
+  document.getElementById("reuse-continue").addEventListener("click", () => {
+    // Must be the first call in the handler: awaiting anything first spends the
+    // user gesture, and Chrome rejects a permission request without one.
+    chrome.permissions
+      .request(TABS_PERM)
+      .then((granted) => {
+        reuseExplainer.hidden = true;
+        reuseToggle.checked = granted;
+        flash(granted ? "Tab reuse on" : "Permission not granted");
+      })
+      .catch(() => {
+        reuseExplainer.hidden = true;
+        reuseToggle.checked = false;
+      });
+  });
+
+  document.getElementById("reuse-cancel").addEventListener("click", () => {
+    reuseExplainer.hidden = true;
+    reuseToggle.checked = false;
+  });
+
+  // Keep the switch honest if the grant changes elsewhere — chrome://extensions
+  // can revoke it while this page is open.
+  if (chrome.permissions.onAdded) chrome.permissions.onAdded.addListener(syncReuseToggle);
+  if (chrome.permissions.onRemoved) chrome.permissions.onRemoved.addListener(syncReuseToggle);
+
   // ---- Init ----
 
   (async () => {
@@ -202,5 +268,6 @@
 
     renderDestList();
     renderOpenShortcut(cmds);
+    await syncReuseToggle();
   })();
 })();

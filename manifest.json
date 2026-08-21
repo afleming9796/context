@@ -13,7 +13,9 @@
     "storage",
     "contextMenus",
     "activeTab",
-    "scripting",
+    "scripting"
+  ],
+  "optional_permissions": [
     "tabs"
   ],
   "options_page": "src/options.html",

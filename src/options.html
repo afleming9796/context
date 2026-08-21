@@ -54,6 +54,33 @@
       </div>
     </section>
 
+    <section id="tab-reuse-section">
+      <h2>Tab reuse</h2>
+      <label class="switch reuse-question">
+        <input type="checkbox" id="reuse-toggle" />
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+        Want to re-use existing tabs to lower loading times?
+      </label>
+
+      <div class="perm-explainer" id="reuse-explainer" hidden>
+        <p class="perm-title">Link-a-roo needs permission to see your open tabs</p>
+        <p class="perm-body">
+          To send a search to a tab you already have open, Link-a-roo has to
+          check the addresses of your open tabs. Chrome will ask you to allow
+          this next.
+        </p>
+        <p class="perm-body">
+          Nothing leaves your device. Link-a-roo has no server and sends no
+          analytics — it reads the addresses only to find a tab to reuse, and
+          keeps no record of them or of what you search.
+        </p>
+        <div class="form-btns">
+          <button id="reuse-continue" class="primary">Continue</button>
+          <button id="reuse-cancel" class="secondary">Not now</button>
+        </div>
+      </div>
+    </section>
+
     <section id="dest-form-section" hidden>
       <h2 id="form-title">New destination</h2>
 
