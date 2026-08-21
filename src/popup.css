@@ -127,20 +127,6 @@ textarea::placeholder { color: var(--faint); }
 }
 .dest-btn:active { transform: translateY(1px); }
 
-/* The first destination is the one Enter searches, so it carries the filled
-   variant. Purely presentational — the buttons are otherwise identical. */
-.dest-btn:first-child {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-accent);
-  font-weight: 600;
-}
-.dest-btn:first-child:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
-  color: var(--on-accent);
-}
-
 .shake { animation: shake 0.35s; border-color: var(--danger) !important; }
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
