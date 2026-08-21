@@ -1,22 +1,22 @@
-# Context
+# Link-a-roo
 
 A Chrome extension for parameterized shortcuts/bookmarks: highlight "Tommy" anywhere, press a key, and search for "Tommy" in Gmail — in a new tab or the one you already have open.
 
-Context is keyboard-first and permission-light. Nothing runs on any page until you invoke it, and it needs no access to your browsing data at install.
+Link-a-roo is keyboard-first and permission-light. Nothing runs on any page until you invoke it, and it needs no access to your browsing data at install.
 
 ## Features
 
-- **A panel in your toolbar**: click the Context icon (or press the shortcut) to open a search box with your highlighted text already filled in, then pick where to send it.
+- **A panel in your toolbar**: click the Link-a-roo icon (or press the shortcut) to open a search box with your highlighted text already filled in, then pick where to send it.
 - **Configurable destinations**: URL templates with a `{term}` placeholder, each with its own label. Add and edit them right in the panel.
 - **Quick-search shortcuts**: highlight text and press a slot shortcut to search one of your first five destinations without opening anything.
 - **Right-click context menu**: highlight text on any page → search it in any configured destination.
-- **Tab reuse**: Context reopens the destination in an existing tab on that site instead of piling up duplicates. Toggle it off per destination.
+- **Tab reuse**: Link-a-roo reopens the destination in an existing tab on that site instead of piling up duplicates. Toggle it off per destination.
 
-Context deliberately keeps no history of what you search — it just opens URLs.
+Link-a-roo deliberately keeps no history of what you search — it just opens URLs.
 
 ## Permissions
 
-Context uses `activeTab`: it can only read a page at the moment you invoke it, on that one tab, and the grant expires on navigation. There are no host permissions and no content scripts. The `tabs` permission is used solely to find an existing tab to reuse instead of opening a duplicate.
+Link-a-roo uses `activeTab`: it can only read a page at the moment you invoke it, on that one tab, and the grant expires on navigation. There are no host permissions and no content scripts. The `tabs` permission is used solely to find an existing tab to reuse instead of opening a duplicate.
 
 ## Installation
 
@@ -24,11 +24,11 @@ Context uses `activeTab`: it can only read a page at the moment you invoke it, o
 2. Open Chrome and navigate to `chrome://extensions`
 3. Enable **Developer mode** (top-right)
 4. Click **Load unpacked** and select the project folder
-5. Pin the Context icon in your Chrome toolbar (puzzle-piece menu → pin Context)
+5. Pin the Link-a-roo icon in your Chrome toolbar (puzzle-piece menu → pin Link-a-roo)
 
 Google and Gmail are seeded as default destinations so the panel does something useful immediately, and the settings page opens on first install with a walkthrough.
 
-To pick up new changes after a `git pull`, go to `chrome://extensions` and click the reload icon on the Context card.
+To pick up new changes after a `git pull`, go to `chrome://extensions` and click the reload icon on the Link-a-roo card.
 
 ## Using it
 
@@ -37,17 +37,17 @@ To pick up new changes after a `git pull`, go to `chrome://extensions` and click
    - `https://mail.google.com/mail/u/0/#search/{term}`
    - `https://github.com/search?q={term}&type=issues`
 2. **Highlight text on any page** — a name, an email address, a ticket ID.
-3. **Search it** — open the panel (your selection is pre-filled) and click a destination, or right-click → **Context**, or press a quick-search shortcut.
+3. **Search it** — open the panel (your selection is pre-filled) and click a destination, or right-click → **Link-a-roo**, or press a quick-search shortcut.
 
 ### Keyboard shortcuts
 
-Chrome owns these bindings — that's why Context needs no access to the sites you visit. View them on the settings page; change them at `chrome://extensions/shortcuts`. Defaults:
+Chrome owns these bindings — that's why Link-a-roo needs no access to the sites you visit. View them on the settings page; change them at `chrome://extensions/shortcuts`. Defaults:
 
-- **Open the Context panel** — `Ctrl+Shift+S` (`⌘⇧S` on Mac)
+- **Open the Link-a-roo panel** — `Ctrl+Shift+S` (`⌘⇧S` on Mac)
 - **Quick-search slots 1–3** — `Alt+1` / `Alt+2` / `Alt+3` (`⌥1`–`⌥3` on Mac)
 - **Quick-search slots 4 and 5** — unbound by default; assign keys (e.g. `Alt+4` / `Alt+5`) if you want them
 
-Chrome allows an extension to suggest at most four default keys, and Context spends them on opening the panel plus the first three slots — hence slots 4 and 5 arriving unbound rather than unavailable.
+Chrome allows an extension to suggest at most four default keys, and Link-a-roo spends them on opening the panel plus the first three slots — hence slots 4 and 5 arriving unbound rather than unavailable.
 
 Quick-search slots map to your first five destinations, in panel order.
 
@@ -59,7 +59,7 @@ Quick-search slots map to your first five destinations, in panel order.
   - **Plain** (URL-encode) — works for most search URLs
   - **Salesforce componentDef (base64)** — wraps the term in a Lightning search payload and base64-encodes it. Use with a template like `https://YOUR-INSTANCE.lightning.force.com/one/one.app#{term}`.
   - **Raw** — substitute the term verbatim
-- **Always open a new tab** — off by default, so Context reuses an existing tab on that hostname.
+- **Always open a new tab** — off by default, so Link-a-roo reuses an existing tab on that hostname.
 
 ## Layout
 

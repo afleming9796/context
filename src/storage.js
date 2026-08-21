@@ -1,4 +1,4 @@
-// Context — Shared storage helpers
+// Link-a-roo — Shared storage helpers
 // Loaded as a classic script (no modules) from the popup, the background
 // worker, and the settings page.
 // Exposes everything on globalThis.CtxStorage.

@@ -2,14 +2,16 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Context</title>
+    <title>Link-a-roo</title>
+    <link rel="stylesheet" href="theme.css" />
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
+    <div class="stripe"></div>
     <div class="header">
       <div class="brand">
-        <img src="../icons/icon-32.png" alt="" />
-        <h1>Context</h1>
+        <img src="../icons/lasso-small.svg" alt="" />
+        <h1>Link<span class="hy">-</span>a<span class="hy">-</span>roo</h1>
       </div>
       <button class="settings-btn" id="open-settings">Settings</button>
     </div>
@@ -28,6 +30,7 @@
       <p class="shortcuts-tip" id="shortcuts-tip" hidden>Tip: highlight text on any page and use a <a href="#" id="shortcuts-tip-link">keyboard shortcut</a> to search directly.</p>
 
       <div class="empty-cta" id="search-empty" hidden>
+        <img class="empty-mark" src="../icons/lasso.svg" alt="" />
         <p class="empty-title">No destinations yet</p>
         <p class="empty-desc">Add a destination in Settings — any site you search often.</p>
         <button class="open-settings-btn" id="empty-add">Open Settings →</button>
@@ -35,10 +38,10 @@
 
       <div class="tip" id="tip" hidden>
         <button class="tip-close" id="tip-close" title="Dismiss">✕</button>
-        <div class="tip-title">💡 Three ways to search</div>
+        <div class="tip-title">Three ways to search</div>
         <ol class="tip-list">
           <li>Highlight text on any page, then press <code id="tip-key">⌘⇧S</code> — it lands in the box above.</li>
-          <li>Highlight, then right-click → <b>Context</b> → pick a destination.</li>
+          <li>Highlight, then right-click → <b>Link-a-roo</b> → pick a destination.</li>
           <li id="tip-slots">Highlight, then press <code class="keys">⌥1</code> to jump straight to your top destinations.</li>
         </ol>
         <a href="#" id="tip-more">Full guide &amp; shortcuts →</a>
